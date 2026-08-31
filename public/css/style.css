@@ -1,9 +1,12 @@
 /********** Template CSS **********/
 :root {
-    --primary: #005357;
+    --primary: #0D5EC1;
+    --primary-hover: #094CA3;
     --secondary: #555555;
-    --light: #F1F3FA;
-    --dark: #0A2F31;
+    --light: #EFF3FB;
+    --light-soft: #E8EEF9;
+    --dark: #0A2351;
+    --dark-hover: #071A3A;
 }
 
 .back-to-top {
@@ -95,9 +98,9 @@
 	box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
 	z-index: 99;
 }
-.btn-flotante:hover {
+     .btn-flotante:hover {
     border-color:#000000;
-	background-color: rgba(255, 193, 7, 0.6); /* Color de fondo al pasar el cursor */
+	background-color: rgba(13, 94, 193, 0.85);
 	box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.3);
 	transform: translateY(-7px);
 }
@@ -649,11 +652,11 @@
 .scrollbar-deep-purple::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-    background-color: #512da8;
+    background-color: #0A2351;
 }
 
 .scrollbar-deep-purple {
-    scrollbar-color: #512da8 #F5F5F5;
+    scrollbar-color: #0A2351 #F5F5F5;
 }
 
 .scrollbar-cyan::-webkit-scrollbar-track {
@@ -670,11 +673,11 @@
 .scrollbar-cyan::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-    background-color: #00bcd4;
+    background-color: #0D5EC1;
 }
 
 .scrollbar-cyan {
-    scrollbar-color: #00bcd4 #F5F5F5;
+    scrollbar-color: #0D5EC1 #F5F5F5;
 }
 
 .scrollbar-dusty-grass::-webkit-scrollbar-track {
@@ -715,7 +718,7 @@
 
 .bordered-deep-purple::-webkit-scrollbar-track {
     -webkit-box-shadow: none;
-    border: 1px solid #512da8;
+    border: 1px solid #0A2351;
 }
 
 .bordered-deep-purple::-webkit-scrollbar-thumb {
@@ -724,7 +727,7 @@
 
 .bordered-cyan::-webkit-scrollbar-track {
     -webkit-box-shadow: none;
-    border: 1px solid #00bcd4;
+    border: 1px solid #0D5EC1;
 }
 
 .bordered-cyan::-webkit-scrollbar-thumb {
@@ -781,3 +784,10 @@
 }
 
 /* --- END LIMITAR UN PARRAFFO A DOS RENGLLONES --- */
+.btn-primary{background-color:var(--primary);border-color:var(--primary)}
+.btn-primary:hover,.btn-primary:focus{background-color:var(--primary-hover);border-color:var(--primary-hover)}
+.text-primary{color:var(--primary)!important}
+.bg-primary{background-color:var(--primary)!important}
+.bg-dark{background-color:var(--dark)!important}
+.navbar-dark .navbar-nav .nav-link.active{color:#fff!important}
+.footer.bg-light{border-top:2px solid var(--dark)!important}
