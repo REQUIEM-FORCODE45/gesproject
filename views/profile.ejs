@@ -1,0 +1,447 @@
+<input type="text" name="" id="username" hidden value="<%= user.username %>">
+<input type="text" name="" id="name" hidden value="<%= user.name %>">
+<input type="text" name="" id="last_name" hidden value="<%= user.last_name %>">
+<input type="text" name="" id="email" hidden value="<%= user.email %>">
+<input type="text" name="" id="identification_type" hidden value="<%= user.identification_type %>">
+<input type="text" name="" id="identification_document" hidden value="<%= user.identification_document %>">
+<input type="text" name="" id="phone" hidden value="<%= user.phone %>">
+<input type="text" name="" id="address" hidden value="<%= user.address %>">
+
+<div class="container mt-4">
+    <!-- Start Content-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-4 col-lg-5">
+                <div class="card text-center">
+                    <div class="card-body" id="get_perfil_and_user_id">
+
+                    </div>
+                    <!-- end card-body -->
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col-->
+
+            <div class="col-xl-8 col-lg-7">
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="nav nav-pills bg-nav-pills nav-justified mb-3">
+                            <li class="nav-item">
+                                <a href="#perfilUsers" data-bs-toggle="tab" aria-expanded="true" class="nav-link rounded-0 active">
+                                    Perfil usuario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#ConfigurarContrasenia" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
+                                    Configurar contraseña
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <!-- end about me section content -->
+                            <div class="tab-pane show active" id="perfilUsers">
+                                <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Informacion personal</h5>
+                                <form id="id_formulario_perfil_update">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="mb-1">
+                                                <label for="nombres_id" class="form-label">Nombres</label>
+                                                <input type="text" class="form-control"  name="nombres" id="nombres_id" placeholder="Digita tus nombres">
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="mb-1">
+                                                <label for="apellidos_id" class="form-label">Apellidos</label>
+                                                <input type="text" class="form-control" name="apellidos" id="apellidos_id" placeholder="Digita tus apellidos">
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="mb-1">
+                                                <label for="telefonoUno_id" class="form-label">Teléfono</label>
+                                                <input type="text" class="form-control" name="telefonoUno" id="telefonoUno_id" placeholder="(+52) 000-000-00-00">
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="mb-1">
+                                                <label for="direccion" class="form-label">Dirección</label>
+                                                <input type="text" class="form-control" name="direccion" id="direccion" placeholder="(+52) 000-000-00-00">
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="mb-1 col-md-4">
+                                            <label for="inputState" class="form-label">Tipo identificaci&oacuten</label>
+                                            <select name="tipoIdentificacion" id="tipoIdentificacion_id" class="form-select">
+                                                <option selected>Cédula de ciudadanía</option>
+                                                <option>Documento extranjero</option>
+                                                <option>Registro civil</option>
+                                                <option>Pasaporte</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-8">
+                                            <div class="mb-1">
+                                                <label for="identificacion_id" class="form-label"># de identificaci&oacuten</label>
+                                                <input type="text" class="form-control" name="identificacion" id="identificacion_id" placeholder="# de identificaci&oacuten">
+                                                
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <!-- end row -->
+                                    
+                                    <div class="text-end">
+                                        <small id="emailHelp" class="form-text text-muted">Nunca compartiremos sus datos con terceros.</small>
+                                        <br>
+                                        <a id="btn_actualizar_perfil_usuario_id" class="btn btn-success mt-2" onclick="putRequestApiPerfilUsuario()"><i class="mdi mdi-content-save"></i> Actualizar</a>
+                                    </div>
+                                </form>
+
+                            </div>
+                            <!-- end perfilUsers content-->
+
+                            <div class="tab-pane" id="ConfigurarContrasenia">
+                                <form id="form_update_contrasenia_id">
+                                    <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Configurar contraseña</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="firstname" class="form-label">Nueva contraseña</label>
+                                                <input type="password" class="form-control" id="contrasenia1_id" placeholder="**********">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="lastname" class="form-label">Confirmar nueva contraseña</label>
+                                                <input type="password" class="form-control" id="contrasenia2_id" placeholder="**********">
+                                            </div>
+                                        </div>
+
+                                        <div id="validate_password_id">
+
+                                        </div>
+                                        <!-- end col -->
+                                    </div>
+                                    <!-- end row -->
+                                    <div class="text-end">
+                                        <a id="btn_cambiar_contrasenia_id" class="btn btn-success mt-2" onclick="postRequestApiCambioContrasenia()"><i class="mdi mdi-content-save"></i> Actualizar</a>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- end ConfigurarContrasenia content-->
+
+                        </div>
+                        <!-- end tab-content -->
+                    </div>
+                    <!-- end card body -->
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row-->
+
+    </div>
+    <!-- container -->
+
+</div>
+<!-- content -->
+
+    <!-- ============================================================== -->
+    <!-- End Page content -->
+    <!-- ============================================================== -->
+
+<!--#################################### SCRIPTS #########################################################################-->
+<link href="//cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script type="text/javascript">
+
+    let username = document.getElementById('username').value
+    let name = document.getElementById('name').value
+    let last_name = document.getElementById('last_name').value
+    let email = document.getElementById('email').value
+    let identification_type = document.getElementById('identification_type').value
+    let identification_document = document.getElementById('identification_document').value
+    let phone = document.getElementById('phone').value
+    let address = document.getElementById('address').value
+
+    ///#################-- GET --- getRequestApi - (nombre del la funcion)  ####/.###############
+    //---- get only inicio-- llama a solo el contenido del api por el id un solo dato
+    async function getRequestApiAllUserPerfil() {
+        //----------------- forma de llamar a api Rest por await y async-----/.---
+        // let res_get_meencanta_all_only = await axios.get('/api');
+        // let jsonListMeEncantaGalery = res_get_meencanta_all_only.data
+        //----------------- forma de llamar a api Rest por await y async-----./---
+        document.getElementById("nombres_id").value = name
+        document.getElementById("apellidos_id").value = last_name
+        document.getElementById("telefonoUno_id").value = phone
+        document.getElementById("direccion").value = address
+        document.getElementById("tipoIdentificacion_id").value = identification_type
+        document.getElementById("identificacion_id").value = identification_document
+
+        let mediosIndirectosInnerHTMLTablaModals = ``
+
+        mediosIndirectosInnerHTMLTablaModals = `
+        <h4 class="mb-0 mt-2">${email}</h4>
+        <p class="text-muted font-14">${username}</p>
+
+        <div class="text-start mt-3">
+            <p class="text-muted mb-2 font-13">
+                <strong>Nombre completo :</strong>
+                <span class="ms-2">${name +" "+ last_name}</span>
+            </p>
+            <p class="text-muted mb-2 font-13">
+                <strong>Telefonos :</strong>
+                <span class="ms-2">${phone}</span>
+            </p>
+            <p class="text-muted mb-2 font-13">
+                <strong>${identification_type}: </strong> 
+                <span class="ms-2 ">${identification_document}</span>
+            </p>
+        </div>
+        `
+        document.getElementById("get_perfil_and_user_id").innerHTML = mediosIndirectosInnerHTMLTablaModals
+
+        console.log("response - Perfil usuario")
+
+        //----------------- forma de llamar a api Rest por await y async-----./---
+    }
+    //---- get only fin -------------------------------------------------------------
+    ///#################-- GET --- getRequestApi - (nombre del la funcion)  #####./##############
+
+    //----------------------------- PERFIL USUARIO PUT--------------------------------------------------------------
+    ///################# PERFIL USUARIO -- PUT --- putRequestApiPerfilUsuario Efecto - proyecto  #####/.###
+    async function putRequestApiPerfilUsuario() {
+        let nombres = document.getElementById("nombres_id")
+        let apellidos = document.getElementById("apellidos_id")
+        let telefono = document.getElementById("telefonoUno_id")
+        let direccion= document.getElementById("direccion")
+        let tipoIdentificacion = document.getElementById("tipoIdentificacion_id")
+        let identificacion = document.getElementById("identificacion_id")
+
+        function btnDisabledAndState(value) {
+            if (value == true) {
+                document.getElementById('btn_actualizar_perfil_usuario_id').innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Loading...`
+                document.getElementById('btn_actualizar_perfil_usuario_id').disabled = true;
+            } else {
+                document.getElementById('btn_actualizar_perfil_usuario_id').innerHTML = `<i class="mdi mdi-content-save"></i> Actualizar`
+                document.getElementById('btn_actualizar_perfil_usuario_id').disabled = false;
+            }
+        }
+
+
+        btnDisabledAndState(true)
+        const formProyecto = document.getElementById('id_formulario_perfil_update')
+        let valueGuardar = false
+        Array.from(formProyecto.elements).forEach(element => {
+            if (!element.value) {
+                element.classList.add("is-invalid");
+                element.classList.remove("is-valid");
+                valueGuardar = false
+                    //console.log("false")
+            } else {
+                element.classList.remove("is-invalid");
+                element.classList.add("is-valid");
+                valueGuardar = true
+                    //console.log("true")
+            }
+        });
+
+        if (!nombres.value || !apellidos.value || !telefono.value || !direccion.value || !tipoIdentificacion.value || !identificacion.value) {
+            valueGuardar = false
+        } else {
+            valueGuardar = true
+        }
+
+        if (valueGuardar == true) {
+            //  /api/:id/:id_objetivo/fines_indirecto/:id_fin/update/:id_fin_ind
+            let urlPerfilUserUpdate = '/profile/update'
+            axios.put(urlPerfilUserUpdate, {
+                name: nombres.value,
+                last_name: apellidos.value,
+                phone: telefono.value,
+                address: direccion.value,
+                identification_type: tipoIdentificacion.value,
+                identification_document: identificacion.value,
+            })
+            .then(function(response) {
+                console.log(response);
+                if (response.status === 200) {
+                    /// 
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Perfil usuario...!',
+                        text: response.data.message
+                    })
+                    btnDisabledAndState(false)
+                    console.log("ok--guardado--perfil usuario...");
+                    console.log(response.data.message);
+                    console.log("ok--guardado--perfil usuario...");
+                } // fin del if 200
+            })
+            .catch(function(error) {
+                console.log(error);
+                if (error.response) {
+                    if (error.response.status === 404) {
+                        btnDisabledAndState(false)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: error.response.data
+                        })
+                    } else if (error.response.status === 500) {
+                        btnDisabledAndState(false)
+                        console.log(error.response.data);
+                        console.log(error.response.status);
+                        console.log(error.response.headers);
+                    } // fin del if 500
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                    btnDisabledAndState(false)
+                } // fin del if error.response
+            });
+
+        } else {
+            btnDisabledAndState(false)
+        }
+        //----------------- forma de llamar a api Rest por await y async-----./---
+
+
+    }
+    ///################# PERFIL USUARIO -- PUT --- putRequestApiPerfilUsuario Efecto - proyecto  #####./###
+    //-----------------------------PERFIL USUARIO PUT--------------------------------------------------------------
+
+    /**
+     * form_update_contrasenia_id
+     * contrasenia1_id
+     * contrasenia2_id
+     * btn_cambiar_contrasenia_id
+     */
+
+    //----------------------------- PERFIL USUARIO PUT--------------------------------------------------------------
+    ///################# PERFIL USUARIO -- PUT --- putRequestApiPerfilUsuario Efecto - proyecto  #####/.###
+    function postRequestApiCambioContrasenia() {
+        let password1 = document.getElementById("contrasenia1_id")
+        let password2 = document.getElementById("contrasenia2_id")
+
+        function btnDisabledAndState(value) {
+            if (value == true) {
+                document.getElementById('btn_cambiar_contrasenia_id').innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Loading...`
+                document.getElementById('btn_cambiar_contrasenia_id').disabled = true;
+            } else {
+                document.getElementById('btn_cambiar_contrasenia_id').innerHTML = `<i class="mdi mdi-content-save"></i> Actualizar`
+                document.getElementById('btn_cambiar_contrasenia_id').disabled = false;
+            }
+        }
+
+
+        btnDisabledAndState(true)
+        const formProyecto = document.getElementById('form_update_contrasenia_id')
+        let valueGuardar = false
+        Array.from(formProyecto.elements).forEach(element => {
+            if (!element.value) {
+                element.classList.add("is-invalid");
+                element.classList.remove("is-valid");
+                valueGuardar = false
+                    //console.log("false")
+            } else {
+                element.classList.remove("is-invalid");
+                element.classList.add("is-valid");
+                valueGuardar = true
+                    //console.log("true")
+            }
+        });
+
+        if (!password1.value || !password2.value) {
+            valueGuardar = false
+            document.getElementById("contrasenia1_id").classList.add("is-invalid");
+            document.getElementById("contrasenia1_id").classList.remove("is-valid");
+
+            document.getElementById("contrasenia2_id").classList.add("is-invalid");
+            document.getElementById("contrasenia2_id").classList.remove("is-valid");
+
+        } else if (password1.value == password2.value) {
+            document.getElementById("contrasenia1_id").classList.remove("is-invalid");
+            document.getElementById("contrasenia1_id").classList.add("is-valid");
+            document.getElementById("contrasenia2_id").classList.remove("is-invalid");
+            document.getElementById("contrasenia2_id").classList.add("is-valid");
+            document.getElementById("validate_password_id").innerHTML = ''
+            valueGuardar = true
+        } else {
+            document.getElementById("contrasenia1_id").classList.remove("is-valid");
+            document.getElementById("contrasenia1_id").classList.add("is-invalid");
+
+            document.getElementById("contrasenia2_id").classList.remove("is-valid");
+            document.getElementById("contrasenia2_id").classList.add("is-invalid");
+            document.getElementById("validate_password_id").innerHTML = '<p class="text-danger">las contraseñas no coinciden. vuelve a intentarlo</p>'
+            valueGuardar = false
+        }
+
+        if (valueGuardar == true) {
+            // inicio time
+            setTimeout(() => {
+                //  /api/:id/:id_objetivo/fines_indirecto/:id_fin/update/:id_fin_ind
+                let urlCambiarContrasenia = '/users/update/password'
+                axios.put(urlCambiarContrasenia, {
+                        password: password1.value
+                    })
+                    .then(function(response) {
+                        console.log(response);
+                        if (response.status === 200) {
+                            /// 
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Configurar usuario...!',
+                                text: response.data.message
+                            })
+                            getRequestApiAllUserPerfil()
+                            btnDisabledAndState(false)
+                            console.log("ok--guardado--perfil usuario...");
+                            console.log(response.data.message);
+                            console.log("ok--guardado--perfil usuario...");
+                        } // fin del if 200
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                        if (error.response) {
+                            if (error.response.status === 404) {
+                                btnDisabledAndState(false)
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: error.response.data
+                                })
+                            } else if (error.response.status === 500) {
+                                btnDisabledAndState(false)
+                                console.log(error.response.data);
+                                console.log(error.response.status);
+                                console.log(error.response.headers);
+                            } // fin del if 500
+                            console.log(error.response.data);
+                            console.log(error.response.status);
+                            console.log(error.response.headers);
+                            btnDisabledAndState(false)
+                        } // fin del if error.response
+                    });
+            }, 1500);
+            // -- final time
+        } else {
+            btnDisabledAndState(false)
+        }
+        //----------------- forma de llamar a api Rest por await y async-----./---
+
+
+    }
+    ///################# PERFIL USUARIO -- PUT --- putRequestApiPerfilUsuario Efecto - proyecto  #####./###
+    //-----------------------------PERFIL USUARIO PUT--------------------------------------------------------------
+
+    window.onload = function() {
+        getRequestApiAllUserPerfil()
+    }
+</script>

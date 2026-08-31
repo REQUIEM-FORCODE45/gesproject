@@ -1,0 +1,3377 @@
+<style>
+    .joinBtn:hover {
+        background-color: rgb(227, 236, 238);
+    }
+
+    .marginReferent {
+        margin-bottom: 5px;
+    }
+
+    .edid{
+        display: none;
+        width: 50px;
+    }
+
+    .contenedor:hover > .edid{
+        display:block;
+        color: aquamarine;
+
+    }
+
+</style>
+
+<input id="vig_tex_id" type="hidden" value=<%= vigTex %>>
+<input id="user_id" type="hidden" value=<%= user._id %>>
+
+<!-- # ---- MODAL EDIT VIG TEC ---- # -->
+<div class="modal fade" id="modal_edit_ficha_vig_tec" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Editar vigilancia</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="form_update_vig_tec"> <!-- Form create ficha vig_tec-->
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="title_ficha" name="title_ficha" placeholder="Titulo" required>
+                            <label for="title_ficha">Titulo</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="area_tema_ficha" name="area_tema" placeholder="Tema-Área" required>
+                            <label for="area_tema">Tema-Área</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="sector" name="sector">
+                                <option selected value="Salud">Salud</option>
+                                <option value="Agropecuario">Agropecuario</option>
+                                <option value="Agroforestas">Agroforestas</option>
+                                <option value="Ingeniería">Ingeniería</option>
+                                <option value="No aplica">No aplica</option>
+                            </select>
+                            <label for="sector">Sector</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="poblacion" name="poblacion">
+                                <option selected value="Urbana">Urbana</option>
+                                <option value="Rural">Rural</option>
+                                <option value="Urbana y Rural">Urbana y Rural</option>
+                                <option value="Desplazados">Desplazados</option>
+                                <option value="Victimas del conflicto">Victimas del conflicto</option>
+                                <option value="Vulnerable">Vulnerable</option>
+                                <option value="No aplica">No aplica</option>
+                            </select>
+                            <label for="poblacion">Población</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Keywords - palabras clave" id="keywords" name="keywords" style="height: 100px" required></textarea>
+                            <label for="keywords">Keywords (favor separ por comas)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                <button class="btn btn-primary" type="button" id="btn_update_vig_tec" onclick="update_ficha()">Editar</button>
+            </div>
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<!-- # ---- MODAL EDIT VIG TEC ---- # -->
+
+<!-- Modal BibTex-->
+<div class="modal fade" id="BibTex_modal" tabindex="-1" aria-labelledby="BibTex_modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="BibTex_modalLabel">Importar BibTex</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 mb-2">
+                <div class="">
+                    <textarea class="form-control" id="BibTex" name="" placeholder="Pegue el BibTex en este espacio" style="height: 300px"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ligth" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#referentModal">Cerrar</button>
+          <button type="button" class="btn btn-primary" onclick="import_bit_text()">Importar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--  # ---- MODAL ADD REFERENT ---- #  -->
+<div class="modal fade" id="referentModal" tabindex="-1" aria-labelledby="referentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="referentModalLabel">Referentes</h5>
+          <div style="width: 450px;"></div>
+          <button type="button" class="btn btn-info me-2" onclick="pre_import_bit_text()" title="importar referencias desde un archivo BibTex">BibTex</button>
+          <button type="button" class="btn btn-light" onclick="clear_modal_vig_tec()">Limpiar</button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="form_post_referent"> <!-- Form register new referent -->
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <select class="form-select" id="doc_type" name="doc_type">
+                                    <option selected value="Artículo científico">Artículo científico</option>
+                                    <option value="Artículo de referencia">Artículo de referencia</option>
+                                    <option value="Capítulo de libro">Capítulo de libro</option>
+                                    <option value="Libro">Libro</option>
+                                    <option value="Informe">Informe</option>
+                                    <option value="Resumen">Resumen</option>
+                                    <option value="Nota editorial">Nota editorial</option>
+                                    <option value="Tesis">Tesis</option>
+                                    <option value="Monografía">Monografía</option>
+                                    <option value="Memorias evento">Memorias evento</option>
+                                    <option value="Ponencia">Ponencia</option>
+                                </select>
+                                <label for="doc_type">Tipo de documento</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="doc_title" name="doc_title" placeholder="Titulo *" required>
+                                <label for="doc_title">Titulo *</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="area_tema" name="area_tema" placeholder="Tema o Área *" required>
+                                <label for="area_tema">Tema o Área *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="year_publication" name="year_publication" value="2023" min="1900" max="2023">
+                                    <label for="year_publication">Año de publicación *</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="country_publication" name="country_publication" placeholder="País de publicación *"  required>
+                                <label for="country_publication">País de publicación *</label>
+                            </div>
+                        </div>
+                        <div class="col-12 border border-warning border-3 rounded pb-1">
+                            <div class="row">
+                                <p class="fs-12 fw-medium text-muted text-center">Agregar autor(es) * <i class="fas fa-question-circle text-warning" title="Presione el boton de agregfar autor para que este pueda ser agregado correctamente al documento."></i></p>
+                                <p class="fs-12 fw-medium fst-italic text-danger text-center" id="remember_menssage" hidden>recuerde agregar el autor presionando el boton de agregar autor</p>
+                                <div class="col-md-5">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="author_name" name="author_name" placeholder="Nombre autor" onchange="remember_add()" required> 
+                                        <label for="author_name">Nombre autor</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="author_lastname" name="author_lastname" placeholder="Apellido autor" required>
+                                        <label for="author_lastname">Apellido autor</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 mt-1">
+                                    <button type="button" class="btn btn-warning btn-lg float-end" title="Agregar autor" onclick="add_author()"><i class="fas fa-plus-circle"></i></button>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <p class="fs-8 fw-medium text-primary" id="author_list">
+                                    <!-- authors name List -->
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" placeholder="Keywords - palabras clave" id="ref_keywords" name="ref_keywords" style="height: 75px" required></textarea>
+                                <label for="ref_keywords">Keywords (favor separ por comas)</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="institution_entity" name="institution_entity" placeholder="Institución ó entidad">
+                                <label for="institution_entity">Institución ó entidad</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="indexing" name="indexing" placeholder="Indexacion">
+                                <label for="indexing">Indexacion</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <!-- <input type="text" class="form-control" id="categorization" name="categorization" placeholder="Categorización"> -->
+                                <select class="form-select" id="categorization" name="categorization">
+                                    <option selected value="">Sin categorización</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                    <option value="Q1">Q1</option>
+                                    <option value="Q2">Q2</option>
+                                    <option value="Q3">Q3</option>
+                                    <option value="Q4">Q4</option>
+                                </select>
+                                <label for="categorization">Categorización</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="ISDN_ISBN" name="ISDN_ISBN" placeholder="ISDN o ISBN">
+                                <label for="ISDN_ISBN">ISDN o ISBN</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="DOI" name="DOI" placeholder="DOI">
+                                <label for="DOI">DOI</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="doc_URL" name="doc_URL" placeholder="URL">
+                                <label for="doc_URL">URL</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" id="abstract" name="abstract" placeholder="Abstract" style="height: 100px"></textarea>
+                                <label for="abstract">Abstract</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating" id="div_post_file">
+                                <input type="file" class="form-control" id="file_id" name="file_id" accept=".pdf" onchange="verif_extencion(this)" placeholder="Documento (.pdf)">
+                                <input id="file_nombre_id" type="hidden">
+                                <label for="file_id">Documento (.pdf)</label>
+                            </div>
+                            <div class="form-floating" id="div_update_file">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ligth" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" id="btn_post_referent" onclick="post_register_referent()">Añadir</button>
+          <button type="button" class="btn btn-info" id="btn_update_referent" onclick="update_register_referent(value)"><i class="far fa-save"></i> Guardar</button>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- # ---- END MODAL ADD REFEERENT ---- # -->
+
+<!-- # --- MODAL ADD ART STATE --- # -->
+<div class="modal fade" id="modal_art_state" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Generar estado del arte</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row g-3">
+                <form id="form_post_art_state"> <!-- Form generate art_state -->
+                    <div class="col-12 mb-2">
+                        <div class="form-floating">
+                            <textarea class="form-control" id="resumen_art_state" name="" placeholder="Resumen vigilancia tecnológica" style="height: 100px"></textarea>
+                            <label for="resumen_art_state">Resumen vigilancia tecnológica</label>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-2" hidden>
+                        <div class="form-floating">
+                            <textarea class="form-control" id="observaciones_art_state" name="" placeholder="Observaciones estado del arte" style="height: 100px"></textarea>
+                            <label for="observaciones_art_state">Observaciones estado del arte</label>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <div class="form-floating">
+                            <textarea class="form-control" id="description_art_state" name="" placeholder="Descripción estado del arte (Análisis propio)" style="height: 100px"></textarea>
+                            <label for="description_art_state">Descripción estado del arte (Análisis propio)</label>
+                        </div>
+                    </div>
+                    <div class="col-12" hidden>
+                        <div class="form-floating">
+                            <textarea class="form-control" id="conclusiones_art_state" name="" placeholder="Conclusiones estado del arte" style="height: 100px"></textarea>
+                            <label for="conclusiones_art_state">Conclusiones estado del arte</label>
+                        </div>
+                    </div> 
+                </form>
+
+                <div class="border border-warning border-3 rounded pb-1">
+                    <p class="text-warning fw-bold ms-4">Agregar campo extra <span title="Agregar campos extra para complementar el estado del arte, estos se veran reflejados en la pestaña de estado del arte">
+                        <i class="fas fa-question-circle"></i></span>
+                    </p>
+                    <div class="row">
+                        <div class="col-11">
+                            <div class="col-12 mb-1">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="title_extra_camp" placeholder="Titulo campo extra" required>
+                                    <label for="title_extra_camp">Titulo campo extra</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="descripcion_extra_camp" name="" placeholder="Descripción campo extra" style="height: 100px"></textarea>
+                                    <label for="descripcion_extra_camp">Descripción campo extra</label>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="col-1 d-grid gap-2">
+                            <button type="button" class="btn btn-warning" title="Agregar campo extra" onclick="add_extra_camp()"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <p class="fst-italic text-danger" id="alert_message_extra_camp" hidden>Para agregar un campo extra debe completar titulo y descripcion del campo.</p>
+                    
+                    <!-- TABLE REFERENTS -->
+                    <div class="table-responsive mx-auto wow fadeInUp mt-1 mb-1" id="table_extra_camps" hidden>
+                        <table class="table table-centered table-hover table-sm mb-0">
+                            <thead class="table-dark align-middle">
+                                <tr>
+                                    <th class="text-center" style="max-width: 200px;">Titulo</th>
+                                    <th class="text-center">Descripción</th>
+                                    <th class="text-center" style="width: 50px;">Eliminar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_extra_camps">
+                                <!-- CONTENT REFERENTS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--  END TABLE REFERENTS -->
+                </div> 
+
+            </div>
+        </div>
+    
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+            <button class="btn btn-primary" type="button" id="btn_post_art_state" onclick="post_art_state()">Generar</button>
+            <button class="btn btn-info" type="button" id="btn_update_art_state" onclick="update_art_state()" hidden><i class="far fa-save"></i> Guardar</button>
+        </div>
+
+      </div>
+    </div>
+</div>
+<!-- # --- MODAL ADD ART STATE --- # -->
+
+<!-- # --- MODAL ADD COLAB --- # -->
+<div class="modal fade" id="modal_colab" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Invitar usuario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="form_post_art_state"> <!-- Form generate art_state -->
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="input_search_user" aria-label="E-mail / username" aria-describedby="btn_search_user" oninput="search_user()" placeholder="E-mail / username">
+                            <button class="btn btn-outline-secondary" type="button" id="btn_search_user"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                    <div id="searching_result">
+                        ...
+                    </div>
+                    <div id="colabs_list">
+                        
+                    </div>
+                </div>
+            </div>
+        
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </form>
+
+      </div>
+    </div>
+</div>
+<!-- # --- MODAL ADD COLAB --- # -->
+
+<!--  # ---- MODAL ADD PROBLEMA ---- #  -->
+<div class="modal fade" id="ProblemaModal" tabindex="-1" aria-labelledby="ProblemaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ProblemaModalLabel">Problemas</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="form_post_ficha"> <!-- Form create Problema-->
+                <div class="modal-body">
+                    <div class="row g-3">
+                        
+                        <div class="col-md-9">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="title" name="title" placeholder="Titulo *" required>
+                                <label for="title">Titulo *</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="sigla" name="sigla" placeholder="Sigla">
+                                <label for="sigla">Sigla</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" id="description" name="description" placeholder="Descripción" style="height: 100px"></textarea>
+                                <label for="description">Descripción</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ligth" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" onclick="post_problem_register(value)" id="btn_add_problem">Añadir</button>
+          <button type="button" class="btn btn-warning" onclick="update_problem(value)" id="btn_update_problem" style="display: none;">Editar</button>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- # ---- END MODAL ADD Problemas ---- # -->
+
+<!-- # ----- MODAL REPORT FICHA ----- # -->
+<div class="modal fade" id="report_modal" tabindex="-1" aria-labelledby="report_modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="report_modalLabel">Reporte ficha</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="div_report">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="print_report()"><i class="fas fa-file-pdf"></i> Imprimir</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- # --- END MODAL REPORT FICHA --- # -->
+
+<!-- BREADCRUMB -->
+<div class="col-12 d-flex flex-row-reverse">
+    <div class="mt-2 me-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="margin-bottom: 0px;">
+                <li class="breadcrumb-item"><a href="/dashboard-vig-tec">Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Vigilancia tecnologica</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- END BREADCRUMB -->
+
+<!-- content vigilancia tecnologica (estado del arte || referentes || datos completos referentes) -->
+<div class="" style="margin: 25px;">
+    
+    <!--  -->
+    <div class="row p-3">
+        <div class="col-12" id="alerts"></div>
+        
+        <div class="col-lg-9 col-md-12 mb-3">
+            <!-- HEAD VIGILANCIA TECNOLOGICA -->
+            <div class="mx-auto wow fadeInUp p-2 bg-dark p-4" style="border-radius: 20px;" data-wow-delay="0.1s" id="head_vig_tec">
+                
+            </div>
+            <hr style="margin-top: 0%; color: #ECF6FF;">       
+            <!-- END HEAD VIGILANCIA TECNOLOGICA -->
+
+            <div class="row mt-2 pe-3">
+
+                
+                <!-- DIV TABLE REFERENTS -->
+                <div class="col-md-8 col-sm-12 bg-white overflow-auto mb-3" style="height: 500px; border-radius: 20px; border-right: 10px solid #ECF6FF;">
+
+                    <ul class="nav nav-pills pt-3 pb-3">
+                        <li class="nav-item me-2">
+                            <a class="btn btn-outline-dark active" href="#referents_table" data-bs-toggle="tab" aria-expanded="false" title="Ver tabla de referentes">
+                                <span>Referentes</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-outline-dark" href="#tab_art_state" data-bs-toggle="tab" aria-expanded="true" title="Ver estado del arte">
+                                <i class="mdi mdi-account-circle d-md-none d-block"></i>
+                                <span>Estado del arte</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- <p>
+                        <button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Referentes</button>
+                        <button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Estado del arte</button>
+                      </p> -->
+
+                    <div class="tab-content">
+                        <div class="tab-pane show active" id="referents_table">
+                            <!-- TABLE REFERENTS -->
+                            <div class="table-responsive mx-auto wow fadeInUp mt-2 mb-2 scrollbar-deep-purple bordered-deep-purple thin" style="height: 400px;">
+                                <table class="table table-centered table-hover table-sm mb-0">
+                                    <thead class="table-dark align-middle">
+                                        <tr>
+                                            <th class="text-center">Tipo <i class="fas fa-chevron-down"></i></th>
+                                            <th class="text-center" style="max-width: 200px;">Titulo <i class="fas fa-chevron-down"></i></th>
+                                            <th class="text-center">Año <i class="fas fa-chevron-down"></i></th>
+                                            <th class="text-center">Autores <i class="fas fa-chevron-down"></i></th>
+                                            <th class="text-center">op <i class="fas fa-chevron-down"></i></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="referents_list">
+                                        <!-- CONTENT REFERENTS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!--  END TABLE REFERENTS -->
+                        </div>
+                        <div class="tab-pane position-relative" id="tab_art_state">
+                            <div class="table-responsive mt-2 mb-2 scrollbar-deep-purple bordered-deep-purple thin" style="height: 400px;" id="div_art_state">
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <!-- DIV DESCRIPCION Y DATOS REFERENTES -->
+                <div class="col-md-4 col-sm-12 bg-white overflow-auto scrollbar-deep-purple bordered-deep-purple thin" id="div_referent" style="height: 500px; border-radius: 20px;">
+
+                </div>
+                <!-- END DIV DESCRIPCION Y DATOS REFERENTES -->
+            </div>
+        </div>
+        
+        <!-- DIV PROBLEMATICAS -->
+        <div class="col-lg-3 col-md-12 mx-auto wow fadeInUp bg-white overflow-auto pt-4 mb-4" id="problematicas" style="border-radius: 20px;">
+            <!-- CONTENT PROBLEMATICAS  -->
+        </div>
+        <!-- DIV PROBLEMATICAS -->
+    </div>  
+</div>
+
+<!-- end content vigilancia tecnologica -->
+<!-- axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- PDF LIBRARIES -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js" integrity="sha256-c3RzsUWg+y2XljunEQS0LqWdQ04X1D3j22fd/8JCAKw=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+<!-- CHart js GRAFICA -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@latest/dist/Chart.min.js"></script>
+
+<!-- SCROLLBAR TAKE IT FROM: https://mdbootstrap.com/docs/b4/jquery/javascript/scroll/ -->
+<script>
+    let vig_tec_id = document.getElementById('vig_tex_id').value
+    let user_id = document.getElementById('user_id').value
+    let authors = []
+    let last_id_referent = ''
+    let referents_array = []
+    let colabs_id = []
+    let art_state_extra_camps = []
+    let creator = false
+    let pWrite = false
+    let pUpdate = false
+    let pDelete = false
+    let DataGlobal = {}
+
+    let art_state_global = {}
+ 
+// # ----- FUNCTIONS ALERTS ----- #    
+
+    function alert_success(message) {
+
+        let alert = `
+            <div class="alert alert-success d-flex align-items-center alert-dismissible fade show" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                <div>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        document.getElementById('alerts').innerHTML += alert
+
+        $(".alert").delay(3000).slideUp(0, function() {
+            $(this).alert('close');
+        });
+        
+    }
+
+    function alert_danger(message) {
+        let alert = `
+            <div class="alert alert-danger d-flex align-items-center alert-dismissible fade show" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#check-circle-fill"/></svg>
+                <div>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        document.getElementById('alerts').innerHTML += alert
+
+        $(".alert").delay(3000).slideUp(0, function() {
+            $(this).alert('close');
+        });
+    }
+
+// # ----- END FUNCTIONS ALERTS ----- # //
+
+//  -- # ----- FUNCTIONS VIGILANCIA TECNOLOGICA ----- # -- //
+    // -- # ----- UPDATE INFO VIG TEC ----- # -- //
+    async function update_ficha() {
+        
+        let title_ficha = document.getElementById('title_ficha').value
+        let area_tema = document.getElementById('area_tema_ficha').value
+        let sector = document.getElementById('sector').value
+        let poblacion = document.getElementById('poblacion').value
+        let keywords = document.getElementById('keywords').value
+
+        let btn = document.getElementById('btn_update_vig_tec')
+        btn.disabled = true;
+        btn.innerHTML = `
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        `
+
+        if(title_ficha !='' && area_tema != '' && keywords != ''){
+            
+            axios.put('/vigTec/update/' + vig_tec_id, {
+                title_ficha,
+                area_tema,
+                sector,
+                poblacion,
+                keywords
+            })
+            .then(function(response) {
+                console.log(response)
+                let message = response.data.message
+                if(response.status == 200){
+                    btn.disabled = false;
+                    btn.innerHTML = `Editar`
+                    $("#modal_edit_ficha_vig_tec").modal("hide")
+                    alert_success(message)
+                    get_all_referents()
+                } else {
+                    alert_danger(message)
+                }
+                
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+        } else {
+            console.log('NO PASA')
+            btn.disabled = false;
+            btn.innerHTML = `Editar`
+            const form = document.getElementById('form_update_vig_tec')
+            Array.from(form.elements).forEach(element => {
+                if (!element.value) {
+                    element.classList.add("is-invalid");
+                    element.classList.remove("is-valid");
+                    valueGuardar = false
+                } else {
+                    element.classList.remove("is-invalid");
+                    element.classList.add("is-valid");
+                    valueGuardar = true
+
+                }
+            });
+            alert_danger('Complete todos los campos obligatorios por favor')
+        }
+        
+    }
+
+    // -- # --- END UPDATE INFO VIG TEC --- # -- //
+
+    // -- # ----- DELETE VIGILANCIA TECNOLOGICA ----- # -- //
+    async function delete_ficha(){
+        Swal.fire({
+            title: 'Estas seguro?',
+            text: "Esta accion no se puede deshacer!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Si, Eliminar!'
+        }).then(async(result) => {
+            if (result.isConfirmed) {
+                try {
+                    const respuesta = await axios.delete('/vigTec/delete/' + vig_tec_id)
+                    console.log(respuesta.status);
+                    let message = respuesta.data.message
+                    if(respuesta.status == 200){
+                        window.location.href = "/dashboard-vig-tec";
+                    } else {
+                        message += respuesta.status
+                        alert_danger(message)
+                    }
+                    
+                } catch (error) {
+                    console.log(error)
+                    Swal.fire(
+                        'Error!',
+                        'No se pudo eliminar',
+                        'error'
+                    )
+                }
+            } else {
+                Swal.fire(
+                    'Cancelado!',
+                    '',
+                    'error'
+                )
+            }
+        })
+    }
+
+    // -- # ----- DELETE VIGILANCIA TECNOLOGICA ----- # -- //
+
+//  -- # --- END FUNCTIONS VIGILANCIA TECNOLOGICA --- # -- //
+
+// # ---- REQUEST DATA REFERENTS PAGE ---- # //
+    async function get_all_referents() {
+        let url = '/vigTec/referents/' + vig_tec_id;
+        axios.get(url)
+            .then(function(response) {
+                let jsonData = response.data
+                DataGlobal = jsonData
+                // console.log(jsonData)
+                // creator = jsonData.creator
+                if(jsonData.creator == user_id){
+                    creator = true
+                    pWrite  = true
+                    pUpdate = true
+                    pDelete = true
+                }
+
+                let render_colabs = ''
+                if (jsonData.colabs.length != 0){
+                    // console.log(jsonData.colabs)
+                    jsonData.colabs.forEach(colab => {
+                        if(colab.user_id == user_id){
+                            pWrite  = colab.permissions.write
+                            pUpdate = colab.permissions.update
+                            pDelete = colab.permissions.delete
+                        }
+                    })
+                    jsonData.colabs.forEach(colab => {
+                        colabs_id.push(colab.user_id)
+                        render_colabs += `
+                        <div class="row border-bottom pb-3 mb-3">
+                            <div class="col-6 ms-3 ">
+                                <h6>${colab.user_name}</h6>
+                                <span>${colab.user_email}</span>
+                            </div>
+                            <div class="col-4">
+                                <div class="dropdown">
+                                    ${creator? `
+                                        <button class="btn btn-ligth dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Permisos
+                                        </button>
+                                    ` : ``}
+                                    
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li>
+                                            <div class="form-check ms-2">
+                                                <input class="form-check-input" type="checkbox" id="writeCheck" onchange="change_permissions(this, '${colab._id}')" ${colab.permissions.write? `checked`:``}>
+                                                <label class="form-check-label" for="writeCheck">
+                                                    Escribir <i class="fas fa-pencil-alt fa-xs"></i>
+                                                </label>
+                                            </div>    
+                                        </li>
+                                        <li>
+                                            <div class="form-check ms-2">
+                                                <input class="form-check-input" type="checkbox" id="updateCheck" onchange="change_permissions(this, '${colab._id}')" ${colab.permissions.update? `checked`:``}>
+                                                <label class="form-check-label" for="updateCheck">
+                                                    Acutalizar <i class="fas fa-pen-square fa-xs"></i>
+                                                </label>
+                                            </div>    
+                                        </li>
+                                        <li>
+                                            <div class="form-check ms-2">
+                                                <input class="form-check-input" type="checkbox" id="deleteCheck" onchange="change_permissions(this, '${colab._id}')" ${colab.permissions.delete? `checked`:``}>
+                                                <label class="form-check-label" for="deleteCheck">
+                                                    Eliminar <i class="fas fa-trash fa-xs"></i>
+                                                </label>
+                                            </div>    
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            ${creator? `
+                            <div class="col-1" id="btn_colab_${colab._id}">
+                                ${colab.permissions.state == 'Active' ? `
+                                <button type="button" class="flex-shrink-0 btn-square bg-warning rounded-circle" onclick="block_colab('${colab._id}', '${colab.user_name}')" title="Presione para bloquear colaborador">
+                                    <i class="fas fa-user-slash text-white"></i>
+                                </button>
+                                ` : `
+                                <button type="button" class="flex-shrink-0 btn-square bg-danger rounded-circle" onclick="unlock_colab('${colab._id}', '${colab.user_name}')" title="Colaborador bloqueado, presione para desbloquear">
+                                    <i class="fas fa-user-lock text-white"></i>
+                                </button>
+                                `}
+                            </div>     
+                            ` : ``}
+                        </div>
+                        ` 
+                    })
+                } else {
+                    render_colabs = `
+                        <p class="text-muted fst-italic">Aún no hay colaboradores</p>
+                    ` 
+                }
+
+                let keywords = ''
+                jsonData.keywords.forEach((keys, i) => {
+                    if(i == jsonData.keywords.length - 1){
+                        keywords += keys    
+                    } else {
+                        keywords += keys + ', '
+                    }
+                });
+
+                let render_head_vig_tec = `
+                    <div class="row">
+                        <div class="col-md-7">
+                            <!-- title -->
+                            <h2 class="fs-4 mb-1 text-white">${jsonData.title_ficha}</h2>
+                            <p class="text-muted fs-6 fw-lighter">${jsonData.area_tema}</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <p class="text-white mb-1" style="font-size: 12px;"><b>Sector: </b>${jsonData.sector}</p>
+                            <p class="text-white" style="font-size: 12px;"><b>Poblacion: </b>${jsonData.poblacion}</p>
+                        </div>
+                        <!-- DIV OPTIONS FICHA VIGILANCIA TECNOLOGICA -->
+                        <div class="col-md-1">
+                            <div class="dropdown">
+                                <a class="btn btn-link bg-light joinBtn text-muted float-center" 
+                                    href="#" role="button" id="optionsMenuLink" data-bs-toggle="dropdown" aria-expanded="false" title="Opciones">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </a>
+                            
+                                <ul class="dropdown-menu" aria-labelledby="optionsMenuLink">
+                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_colab">Colabs <i class="fas fa-user-plus float-end mt-1"></i></a></li>
+                                    ${pUpdate? `
+                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_edit_ficha_vig_tec">Editar <i class="fas fa-edit float-end mt-1"></i></a></li>                                        
+                                    `:``}
+                                    ${creator? `
+                                    <li><a class="dropdown-item" onclick="delete_ficha()">Eliminar <i class="fas fa-trash-alt float-end mt-1"></i></a></li>                                        
+                                    `:``}
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- END DIV OPTIONS VIG TEC -->
+                    </div>
+                    <!-- keywords -->
+                    <div class="">
+                        <p class="fs-6 fw-medium text-white">${keywords}</p>
+                    </div>
+                    <div class="mt-1 mb-1 text-end">
+                        ${jsonData.tree.length != 0 ? `
+                        ${jsonData.tree[jsonData.tree.length-1].objetivos? `
+                            <a class="btn btn-primary" href="/cadena-valor/${vig_tec_id}/${jsonData.tree[jsonData.tree.length-1]._id}">
+                                <i class="fas fa-table"></i> Cadena de valor
+                            </a>`
+                        :``}
+                        
+                                <a class="btn btn-light" href="/tree/${vig_tec_id}/${jsonData.tree.length}" title="Ver ultimo arbol de problemas generado"><i class="fas fa-sitemap"></i> Ver árbol de problemas</a>
+                        `:``}
+                            <button class="btn btn-warning text-dark" onclick="report_generate()" title="Generar reporte de la vigilancia tecnologica"><i class="fas fa-file-alt"></i> Generar Reporte</button>
+                    </div>
+                `
+
+                let render_art_state = ''
+                let render_problematicas = ''
+                if(jsonData.artState.length != 0){
+
+                    art_state_global = jsonData.artState[0]
+
+                    let art_state = jsonData.artState[0]
+                    document.getElementById('btn_add_problem').value = art_state._id
+
+                    let render_problems_tab = ''
+                    let render_problems_list = ''
+                    art_state.problems.forEach( problem => {
+                        render_problems_tab += `
+                        <tr title="${problem.description}" id="fila_problem_${problem._id}">
+                            <td><p>${problem.sigla}</p></td>
+                            <td><p class="lh-2 lim-text mb-1">${problem.title}</p></td>
+                            <td>
+                                <div class="row">
+                                    ${pUpdate? `
+                                    <div class="col-5">
+                                        <button type="button" class="btn btn-link btn-sm" onclick="get_update_problem('${art_state._id}', '${problem._id}')" title="Editar problema">
+                                            <i class="fas fa-pen text-muted"></i>
+                                        </button>
+                                    </div>
+                                    `:``}
+                                    ${pDelete? `
+                                    <div class="col-5">
+                                        <button type="button" class="btn btn-link btn-sm" onclick="delete_problem('${art_state._id}', '${problem._id}')" title="Eliminar problema">
+                                            <i class="fas fa-trash-alt text-danger"></i>
+                                        </button>
+                                    </div>    
+                                    ` : ``}
+                                    
+                                </div>  
+                            </td>
+                        <tr>
+                        `
+                        render_problems_list += `
+                            <li>${problem.title}: ${problem.description}</li>
+                        `
+                    })
+
+                    render_problematicas = `
+                    <div class="col-12">
+                        <div class="row mb-4">
+                            <div class="col-5">
+                                <p class="fs-6 fw-bold mb-1">Problemáticas </p>
+                            </div>
+                            <div class="col-7 text-end">
+                                <a class="btn btn-sm btn-outline-warning" href="/matriz/${vig_tec_id}/${art_state._id}">Ver matriz de vester</a>
+                            </div>
+                        </div>
+                    
+                        <!-- TABLE PROBLEMS -->
+                        <div class="table-responsive mx-auto wow fadeInUp mt-2 mb-2 scrollbar-deep-purple bordered-deep-purple thin" style="height: 630px;">
+                            <table class="table table-centered table-hover table-sm mb-0">
+                                <thead class="table-dark align-middle">
+                                    <tr>
+                                        <th class="text-center" style="width: 70px;">Sigla <i class="fas fa-chevron-down fa-sm"></i></th>
+                                        <th class="text-center" style="max-width: 150px;">Titulo <i class="fas fa-chevron-down fa-sm"></i></th>
+                                        <th class="text-center" style="min-width: 70px;" title="Opciones">Op <i class="fas fa-chevron-down fa-sm"></i></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="problems_list" style="background-color: white;">
+                                    <!-- CONTENT PROBLEMS -->
+                                    ${pWrite? `
+                                    <tr>
+                                        <td colspan="4">
+                                            <a class="btn btn-link d-flex justify-content-center text-muted fs-6" data-bs-toggle="modal" data-bs-target="#ProblemaModal" onclick="hide_buttons()">
+                                                <i class="fas fa-plus-circle mt-1"></i>&nbsp;Añadir nuevo problema
+                                            </a>
+                                        </td>
+                                    <tr>
+                                    ` : ``}
+                                    
+                                    ${render_problems_tab}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--  END TABLE PROBLEMS -->
+                    </div>
+                    `
+                
+                    let extra_camps = ''
+                    art_state.extra_camps.forEach(extra => {
+                        extra_camps += `
+                            <p class="fw-bold mb-1">${extra.title}: </p>
+                            <div id="extra_${extra._id}">${extra.description}</div>
+                        `
+                    })
+
+                    render_art_state += `
+                        <hr>
+                        ${pUpdate? `
+                        <button class="btn btn-link action-icon position-absolute top-0 end-0" id="art_state_update_btn" onclick="get_update_art_state('${art_state._id}')" title="Editar estado del arte">
+                            <i class="fas fa-edit text-muted"></i>
+                        </button>
+                        `:``}
+                        <button type="button" class="btn btn-danger btn-sm mt-2 position-absolute" onclick="print_informe()"><i class="fas fa-file-pdf"></i> Imprimir</button>
+                        <br><br>
+                        <div id="print_art_state">
+                            <h4>Estado del arte</h4>
+                            <div class="ms-2">
+                                <div class="position-relative contenedor mb-2">
+                                    <p class="fw-bold mb-1">Resumen: </p>
+                                    ${pUpdate? `
+                                    <a class="btn btn-link action-icon edid position-absolute top-0 end-0" id="art_state_resumen_btn" onclick="fast_edit_art_state('${art_state._id}', 'art_state_resumen')" title="Editar resumen">
+                                        <i class="fas fa-pen fa-xs text-muted"></i>
+                                    </a>
+                                    ` : ``}
+                                    
+                                    <div id="art_state_resumen">${art_state.resumen}</div>
+                                </div>
+                                <!--<div class="position-relative contenedor mb-2">
+                                    <p class="fw-bold mb-1">Observaciones: </p>
+                                    ${pUpdate? `
+                                    <a class="btn btn-link action-icon edid position-absolute top-0 end-0" id="art_state_observaciones_btn" onclick="fast_edit_art_state('${art_state._id}', 'art_state_observaciones')" title="Editar bservaciones">
+                                        <i class="fas fa-pen fa-xs text-muted"></i>
+                                    </a>
+                                    `:``}
+                                    
+                                    <div id="art_state_observaciones">${art_state.observaciones}</div>
+                                </div>-->
+                                <div class="position-relative contenedor mb-2">
+                                    <p class="fw-bold mb-1">Descripcion: </p>
+                                    ${pUpdate? `
+                                    <a class="btn btn-link action-icon edid position-absolute top-0 end-0" id="art_state_description_btn" onclick="fast_edit_art_state('${art_state._id}', 'art_state_description')" title="Editar descripción">
+                                        <i class="fas fa-pen fa-xs text-muted"></i>
+                                    </a>
+                                    `:``}
+                                    
+                                    <div id="art_state_description">${art_state.description}</div>
+                                </div>
+                                <!--<div class="position-relative contenedor mb-2">
+                                    <p class="fw-bold mb-1">Conclusiones: </p>
+                                    ${pUpdate? `
+                                    <a class="btn btn-link action-icon edid position-absolute top-0 end-0" id="art_state_conclusiones_btn" onclick="fast_edit_art_state('${art_state._id}', 'art_state_conclusiones')" title="Editar conclusiones">
+                                        <i class="fas fa-pen fa-xs text-muted"></i>
+                                    </a>
+                                    `:``}
+                                    
+                                    <div id="art_state_conclusiones">${art_state.conclusiones}</div>
+                                </div>-->
+                                <div>
+                                    ${extra_camps}
+                                </div>
+
+                                <p class="fw-bold mb-1">Problematicas:</p> 
+                                <ol>
+                                    ${render_problems_list}
+                                </ol> 
+                            </div>
+                        </div>
+                    `
+                } else {
+
+                    render_problematicas = `
+                    <div class="text-center mt-4 rounded-circle">
+                        ${pWrite? `
+                            <button class="btn btn-ligth btn-rounded joinBtn" data-bs-toggle="modal" data-bs-target="#modal_art_state" title="Generar estado del arte">
+                            <i class="fas fa-plus fa-6x"></i>
+                            <p class="mt-4">Generar estado del arte</p>    
+                        </button>
+                        `:`No tienes permiso para agregar estado del arte`}
+                        
+                    </div>
+                    `
+                }
+
+                let render_referents = `
+                    ${pWrite? `
+                    <tr>
+                        <td colspan="5">
+                            <a class="btn btn-link d-flex justify-content-center text-muted fs-6" onclick="clear_modal_referent()" title="Añadir un documento referente a la vigilancia tecnológica">
+                                <i class="fas fa-plus-circle mt-1"></i>&nbsp;Añadir Documento
+                            </a>
+                        </td>
+                    <tr>  
+                    `:``}
+                    
+                `
+
+                referents_array = jsonData.referents
+                jsonData.referents.forEach(ref => {
+                    let author = ''
+                    ref.authors.forEach((a, i) => {
+                        if (i == ref.authors.length - 1){
+                            author += a.name[0] + '. ' + a.lastname
+                        } else {
+                            author += a.name[0] + '. ' + a.lastname + ', '
+                        }
+                        
+                    })
+                    render_referents += `
+                    <tr id="${ref._id}" onclick="get_referent('${ref._id}')">
+                        <td style="max-width: 100px;">
+                            <i class="fas fa-circle text-warning"></i>&nbsp;${ref.doc_type}
+                        </td>
+                        <td style="max-width: 200px;" title="${ref.doc_title}"><p class="lh-2 lim-text mb-1">${ref.doc_title}</p></td>
+                        <td class="text-center">${ref.year_publication}</td>
+                        <td style="max-width: 100px;" title="${author}"><p class="lh-2 lim-text mb-1">${author}</p></td>
+                        <td style="max-width: 100px;">
+                            ${pUpdate? `
+                            <button class="btn btn-link action-icon" id="btn_referent_update_${ref._id}" onclick="get_update_referent('${ref._id}')" title="Editar referente">
+                                <i class="fas fa-edit text-muted"></i>
+                            </button>
+                            `:``}
+                            
+                        </td>
+                    </tr>
+                    `
+                })
+
+                document.getElementById('head_vig_tec').innerHTML = render_head_vig_tec
+                document.getElementById('problematicas').innerHTML = render_problematicas
+                document.getElementById('div_art_state').innerHTML = render_art_state
+                document.getElementById('referents_list').innerHTML = render_referents
+                document.getElementById('colabs_list').innerHTML = render_colabs
+                document.getElementById('title_ficha').value = jsonData.title_ficha
+                document.getElementById('area_tema_ficha').value = jsonData.area_tema
+                document.getElementById('sector').value = jsonData.sector
+                document.getElementById('poblacion').value = jsonData.poblacion
+                document.getElementById('keywords').innerHTML = keywords
+                
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+    }
+
+// # ---- END REQUEST DATA REFERENTS PAGE ---- # //
+
+// # ---- CLEAR MODAL REFERENT ---- # //
+    function clear_modal_vig_tec() {
+        document.getElementById('doc_title').value = ""
+        document.getElementById('area_tema').value = ""
+        document.getElementById('year_publication').value = ""
+        document.getElementById('country_publication').value = ""
+        document.getElementById('institution_entity').value = ""
+        document.getElementById('indexing').value = ""
+        document.getElementById('categorization').value = ""
+        document.getElementById('ISDN_ISBN').value = ""
+        document.getElementById('DOI').value = ""
+        document.getElementById('doc_URL').value = ""
+        document.getElementById('abstract').value = ""
+        document.getElementById('file_id').value = ""
+    }
+
+// # ---- END CLEAR MODAL VREFERENT ---- # //
+
+        // --- # FUNCTION POST PROBLEMS -ART STATE # ---- //
+    async function post_problem_register(art_state_id) {
+        console.log('REGISTRO DE PROBLEMAS')
+        console.log(art_state_id)
+        
+        let title = document.getElementById('title').value
+        let sigla = document.getElementById('sigla').value
+        let description = document.getElementById('description').value
+
+        let btn = document.getElementById('btn_add_problem')
+        btn.disabled = true;
+        btn.innerHTML = `
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        `
+
+        if(title !='' && sigla != '' && description != ''){
+            console.log('send')
+            console.log(title)
+           
+            let url_api = '/problem/register/' + vig_tec_id + '/' + art_state_id
+            axios.post(url_api, {
+                title,
+                sigla,
+                description,
+            })
+            .then(function(response) {
+                console.log(response)
+                let message = response.data.message
+                if(response.status == 200){
+                    title = ''
+                    sigla = ''
+                    description = ''
+                    
+                    alert_success(message);
+                    btn.disabled = false;
+                    btn.innerHTML = `Añadir`
+
+                    $("#ProblemaModal").modal("hide")
+                    get_all_problems(art_state_id);
+                } else {
+                    alert_danger(message)
+                }
+                
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+        } else {
+            console.log('NO PASA')
+            btn.disabled = false;
+            btn.innerHTML = `Añadir`
+        }
+        
+    }   
+
+        // --- # END POST FUNCTION PROBLEMS -ART STATE # ---- //
+    
+    async function get_all_problems(art_state_id){
+        let url = '/problem/get-all/' + vig_tec_id;
+        let render_art_state = ''
+        axios.get(url)
+            .then(function(response) {
+                console.log(response.data)
+                let jsonData = response.data
+                let render_problems = ''
+                jsonData.problems.forEach(problem => {
+                    render_problems += `
+                        <tr title="${problem.description}" id="fila_problem_${problem._id}">
+                            <td><p>${problem.sigla}</p></td>
+                            <td><p class="lh-2 lim-text mb-1">${problem.title}</p></td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-5">
+                                        <button type="button" class="btn btn-link btn-sm" onclick="get_update_problem('${art_state_id}', '${problem._id}')">
+                                            <i class="fas fa-pen text-muted"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col-5">
+                                        <button type="button" class="btn btn-link btn-sm" onclick="delete_problem('${art_state_id}', '${problem._id}')">
+                                            <i class="fas fa-trash-alt text-danger"></i>
+                                        </button>
+                                    </div>
+                                </div>  
+                            </td>
+                        <tr>
+                        `
+                })
+                render_art_state = `
+                   
+                    <!-- CONTENT PROBLEMS -->
+                    <tr>
+                        <td colspan="4">
+                            <a class="btn btn-link d-flex justify-content-center text-muted fs-6" data-bs-toggle="modal" data-bs-target="#ProblemaModal" onclick="hide_buttons()">
+                                <i class="fas fa-plus-circle mt-1"></i>&nbsp;Añadir nuevo problema
+                            </a>
+                        </td>
+                    <tr>
+                    ${render_problems}
+                                
+                `
+                document.getElementById('problems_list').innerHTML = render_art_state
+            })
+            .catch (function (error) {
+                console.log(error)
+            })
+    }
+        // -- # ----- GET UPDATE PROBLEM ----- # -- //
+
+    async function get_update_problem(id_art_state, id_problem){
+        console.log('Edicion problema')
+        let data_problem = document.getElementById('fila_problem_'+ id_problem)
+        // console.log('data_problem')
+        // console.log(data_problem)
+        let sigla = data_problem.getElementsByTagName("p")[0].innerText
+        let title = data_problem.getElementsByTagName("p")[1].innerText
+        let description = data_problem.title
+        // console.log('sigla: ' + sigla + ' - titulo: ' + title + ' - descripcion: ' + description)
+
+        document.getElementById('btn_add_problem').style.display = 'none'; // hide
+        document.getElementById('btn_update_problem').style.display = ''; // show
+        document.getElementById('btn_update_problem').value = `${id_art_state},${id_problem}`; // show
+
+        document.getElementById('title').value = title
+        document.getElementById('sigla').value = sigla
+        document.getElementById('description').value = description 
+        
+        $("#ProblemaModal").modal("show")
+
+    }
+
+        // -- # --- END GET UPDATE PROBLEM --- # -- //
+
+        // -- # ----- UPDATE PROBLEM ----- # -- //
+    async function update_problem(data){
+        let datas = data.split(',')
+        let id_art_state = datas[0]
+        let id_problem = datas[1]
+
+        console.log('id estado arte: ' + id_art_state + ' - id_ problema: ' + id_problem)
+
+        let title = document.getElementById('title').value
+        let sigla = document.getElementById('sigla').value
+        let description = document.getElementById('description').value
+
+        let btn = document.getElementById('btn_update_problem')
+        btn.disabled = true;
+        btn.innerHTML = `
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        `
+
+        if(title !='' && sigla != '' && description != ''){
+           
+            let url_api = '/problem/update/' + vig_tec_id + '/' + id_art_state + '/' + id_problem
+            axios.put(url_api, {
+                title,
+                sigla,
+                description,
+            })
+            .then(function(response) {
+                console.log(response)
+                let message = response.data.message
+                if(response.status == 200){
+                    title = ''
+                    sigla = ''
+                    description = ''
+                    
+                    btn.disabled = false;
+                    btn.innerHTML = `Editar`
+                    document.getElementById('btn_add_problem').style.display = ''; // show
+                    document.getElementById('btn_update_problem').style.display = 'none'; // hide
+
+                    alert_success(message);
+                    $("#ProblemaModal").modal("hide")
+                    get_all_problems(id_art_state);
+                } else {
+                    alert_danger(message)
+                }
+                
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+        } else {
+            console.log('NO PASA')
+            btn.disabled = false;
+            btn.innerHTML = `Editar`
+        }
+
+    }
+
+        // -- # ----- END UPDATE PROBLEM ----- # -- //
+
+        // -- # ----- DELETE PROBLEM - ART STATE ------ # -- //
+    async function delete_problem(id_art_state, id_problem){
+        Swal.fire({
+            title: 'Estas seguro?',
+            text: "Esta accion no se puede deshacer!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Si, Eliminar!'
+        }).then(async(result) => {
+            if (result.isConfirmed) {
+                try {
+                    const respuesta = await axios.delete('/problem/delete/' + vig_tec_id + '/' + id_art_state + '/' + id_problem)
+                    console.log(respuesta.status);
+                    let message = respuesta.data.message
+                    if(respuesta.status == 200){
+                        alert_success(message)
+                        last_id_referent = ''
+                        document.getElementById('div_referent').innerHTML = ''
+                        get_all_referents();
+                    } else {
+                        message += respuesta.status
+                        alert_danger(message)
+                    }
+                    
+                } catch (error) {
+                    console.log(error)
+                    Swal.fire(
+                        'Error!',
+                        'No se pudo eliminar',
+                        'error'
+                    )
+                }
+            } else {
+                Swal.fire(
+                    'Cancelado!',
+                    '',
+                    'error'
+                )
+            }
+        })
+    }
+
+        // -- # --- END DELETE PROBLEM - ART STATE ---- # -- //
+
+    // --- #  END FUNCTIONS ART STATE # ---- //
+
+// # ------- ADD COLABS ------- # //
+
+    // -- # ----- SEARCHING REGISTER USERS ----- # -- //
+    function search_user() {
+        let searching_result = "";
+        let btn = ""
+        let datauser = document.getElementById('input_search_user').value
+        console.log(datauser)
+        if(datauser != ""){
+            let url = '/users/search/' + datauser
+            axios.get(url)
+                .then(function (response) {
+                    console.log(response.data)
+                    let jsonData = response.data
+
+                    if(jsonData.users.length != 0){
+                        jsonData.users.forEach(user => {
+                            if(user._id != user_id){
+                                if(colabs_id.find( id => id == user._id)){
+                                    btn = `
+                                        <button type="button" class="flex-shrink-0 btn-square bg-ligth rounded-circle" 
+                                            title="Colaborador">
+                                            <i class="fas fa-user-check"></i>
+                                        </button>`;
+                                } else {
+                                    btn = `
+                                        <button type="button" class="btn flex-shrink-0 btn-square bg-primary rounded-circle" id="btn_add_user_${user._id}" onclick="add_user('${user._id}')" 
+                                            title="Agregar usuario como colaborador">
+                                            <i class="fas fa-user-plus text-white"></i>
+                                        </button>
+                                    `;
+                                }
+                                searching_result += `    
+                                        <div class="row border-bottom pb-3 mb-3">
+                                            <div class="col-9 ms-3 ">
+                                                <h6>${user.username}</h6>
+                                                <span>${user.email}</span>
+                                            </div>
+                                
+                                            <div class="col-2">
+                                                ${btn}
+                                            </div>
+                                        </div>
+                                    
+                                `;
+                            }
+                        })
+                    } else {
+                        searching_result += `
+                            <p class="text-danger" id="invalid_email" hidden>Error: direccion de Email invalido</p>
+                            <p id="message_invite_email">No se encontraron resultados para <span class="fw-bold">${datauser}</span>, le gustaria enviar invitacion por correo? <a type="button" href="#" text-primary onclick="send_email_user('${datauser}')">Enviar invitacion</a>
+                            <span class="text-muted fst-italic">(debe escribir el email de la persona a la que quiere invitar en la barra de busqueda)</span></p>
+                        `
+                    }
+                document.getElementById('searching_result').innerHTML = searching_result
+            })
+            .catch(function (error){
+                console.log(error)
+            })
+        }else{
+            document.getElementById('searching_result').innerHTML = ''
+            // document.getElementById(btn_search).innerHTML = `Buscar`
+            // document.getElementById(btn_search).disabled = false;
+            // document.getElementById("card_busqueda_id").style.display = 'none';
+            // document.getElementById('resultasoBuscar_id').innerHTML = "";
+        }
+
+    }
+    
+    // -- # --- END SEARCHING REGISTER USERS --- # -- //
+
+    // -- # ----- ADD USER FOUND TO THE VIG TEC ----- # -- //
+    async function add_user(id_user){
+        console.log('ADD USER')
+        let btn_id = 'btn_add_user_' + id_user
+
+        document.getElementById(btn_id).innerHTML = `
+            <div class="spinner-border text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        `
+        let url = `/vigTec/${vig_tec_id}/colab/${id_user}`
+        await axios.post(url, {})
+            .then(function(response) {
+                console.log(response)
+                let colab = response.data.colab
+                let message = response.data.message
+
+                document.getElementById(btn_id).innerHTML = `<i class="fas fa-user-check"></i>`
+                document.getElementById(btn_id).classList.remove('bg-primary')
+                document.getElementById(btn_id).classList.remove('btn')
+                document.getElementById(btn_id).classList.add('bg-ligth')
+                colabs_id.push(colab.user_id)
+                let render_colab = `
+                    <p class="text-warning fst-italic">No olvides otorgar permisos al nuevo colaborador</p>
+                    <div class="row border-bottom pb-3 mb-3">
+                        <div class="col-6 ms-3 ">
+                            <h6>${colab.user_name}</h6>
+                            <span>${colab.user_email}</span>
+                        </div>
+                        <div class="col-4">
+                            <div class="dropdown">
+                                <button class="btn btn-ligth dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Permisos
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li>
+                                        <div class="form-check ms-2">
+                                            <input class="form-check-input" type="checkbox" id="writeCheck" onchange="change_permissions(this, '${colab._id}')" ${colab.permissions.write? `checked`:``}>
+                                            <label class="form-check-label" for="writeCheck">
+                                                Escribir <i class="fas fa-pencil-alt fa-xs"></i>
+                                            </label>
+                                        </div>    
+                                    </li>
+                                    <li>
+                                        <div class="form-check ms-2">
+                                            <input class="form-check-input" type="checkbox" id="updateCheck" onchange="change_permissions(this, '${colab._id}')" ${colab.permissions.update? `checked`:``}>
+                                            <label class="form-check-label" for="updateCheck">
+                                                Acutalizar <i class="fas fa-pen-square fa-xs"></i>
+                                            </label>
+                                        </div>    
+                                    </li>
+                                    <li>
+                                        <div class="form-check ms-2">
+                                            <input class="form-check-input" type="checkbox" id="deleteCheck" onchange="change_permissions(this, '${colab._id}')" ${colab.permissions.delete? `checked`:``}>
+                                            <label class="form-check-label" for="deleteCheck">
+                                                Eliminar <i class="fas fa-trash fa-xs"></i>
+                                            </label>
+                                        </div>    
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-1" id="btn_colab_${colab._id}">
+                            ${colab.permissions.state == 'Active' ? `
+                            <button type="button" class="flex-shrink-0 btn-square bg-warning rounded-circle" onclick="block_colab('${colab._id}', '${colab.user_name}')" title="Presione para bloquear colaborador">
+                                <i class="fas fa-user-slash text-white"></i>
+                            </button>
+                            ` : `
+                            <button type="button" class="flex-shrink-0 btn-square bg-danger rounded-circle" onclick="unlock_colab('${colab._id}', '${colab.user_name}')" title="Colaborador bloqueado, presione para desbloquear">
+                                <i class="fas fa-user-lock text-white"></i>
+                            </button>
+                            `}
+                        </div>
+                    </div>
+                `
+                document.getElementById('input_search_user').value = ''
+                document.getElementById('colabs_list').innerHTML += render_colab
+                alert_success(message);
+                // $("#modal_colab").modal("hide");
+                // get_all_referents();
+            })
+            .catch(function (error){
+                console.log(error)
+                alert_danger(error.response.data.message);
+            })
+
+    }
+
+    // -- # --- END ADD USER FOUND TO THE VIG TEC --- # -- //
+
+    // -- # --- CHANGE PERMISSIONS COLAB --- # -- //
+
+    async function change_permissions(permission, colab_id){
+        console.log('cambio estado del permiso')
+        let state_permission = false
+
+        if(permission.checked){
+            state_permission = true
+        } else {
+            state_permission = false
+        }
+
+        let url = `/colab/${vig_tec_id}/permission`;
+        await axios.post(url, {
+            colab_id,
+            permission: permission.id,
+            state_permission
+        })
+        .then(function(response) {
+
+        })
+        .catch(function(error){
+            console.log(error)
+        })
+
+    }
+
+    // -- # --- BLOCK COLAB --- # -- //
+    async function block_colab(id_colab, colab_username) {
+        Swal.fire({
+            title: `Seguro quieres bloquear a ${colab_username} como colaborador?`,
+            text: "Esta acción se puede deshacer!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Si, Bloquear!'
+        }).then(async(result) => {
+            if (result.isConfirmed) {
+                let btn = `btn_colab_${id_colab}`
+                document.getElementById(btn).innerHTML = `
+                    <div class="spinner-border text-secondary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                `
+                try {
+                    let url = `/colab/${vig_tec_id}/block/${id_colab}`
+                    await axios.put(url)
+                    .then(function(response) {
+                        console.log(response)
+                        document.getElementById(btn).innerHTML = `
+                            <button type="button" class="flex-shrink-0 btn-square bg-danger rounded-circle" onclick="unlock_colab('${id_colab}', '${colab_username}')" title="Colaborador bloqueado, presione para desbloquear">
+                                <i class="fas fa-user-lock text-white"></i>
+                            </button>
+                        `
+                        Swal.fire(
+                            'Bloqueo!',
+                            'Colaborador bloqueado',
+                            'success'
+                        )
+                    })
+                    .catch(function(error){
+                        console.log(error)
+                        document.getElementById(btn).innerHTML = `
+                            <button type="button" class="flex-shrink-0 btn-square bg-warning rounded-circle" onclick="block_colab('${id_colab}', '${colab_username}')" title="Presione para bloquear colaborador">
+                                <i class="fas fa-user-slash text-white"></i>
+                            </button>
+                        `
+                    })
+                    
+                } catch (error) {
+                    console.log(error)
+                    document.getElementById(btn).innerHTML = `
+                            <button type="button" class="flex-shrink-0 btn-square bg-warning rounded-circle" onclick="block_colab('${id_colab}', '${colab_username}')" title="Presione para bloquear colaborador">
+                                <i class="fas fa-user-slash text-white"></i>
+                            </button>
+                        `
+                    Swal.fire(
+                        'Error!',
+                        'No se pudo bloquear, recarga la pagina e intente nuevamente',
+                        'error'
+                    )
+                }
+            } else {
+                Swal.fire(
+                    'Cancelado!',
+                    '',
+                    'error'
+                )
+            }
+        })
+    }
+
+    // -- # --- UNLOCK COLAB --- # -- //
+    async function unlock_colab(id_colab, colab_username) {
+        Swal.fire({
+            title: `Desbloquear a ${colab_username} como colaborador?`,
+            text: "Esta acción se puede deshacer!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Si, Desbloquear!'
+        }).then(async(result) => {
+            if (result.isConfirmed) {
+                let btn = `btn_colab_${id_colab}`
+                document.getElementById(btn).innerHTML = `
+                    <div class="spinner-border text-secondary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                `
+                try {
+                    let url = `/colab/${vig_tec_id}/unlock/${id_colab}`
+                    await axios.put(url)
+                    .then(function(response) {
+                        console.log(response)
+                        document.getElementById(btn).innerHTML = `
+                            <button type="button" class="flex-shrink-0 btn-square bg-warning rounded-circle" onclick="block_colab('${id_colab}', '${colab_username}')" title="Presione para bloquear colaborador">
+                                <i class="fas fa-user-slash text-white"></i>
+                            </button>
+                        `
+                        Swal.fire(
+                            'Desbloqueo!',
+                            'Colaborador desbloqueado',
+                            'success'
+                        )
+                    })
+                    .catch(function(error){
+                        console.log(error)
+                        document.getElementById(btn).innerHTML = `
+                            <button type="button" class="flex-shrink-0 btn-square bg-danger rounded-circle" onclick="unlock_colab('${id_colab}', '${colab_username}')" title="Colaborador bloqueado, presione para desbloquear">
+                                <i class="fas fa-user-lock text-white"></i>
+                            </button>
+                        `
+                    })
+                    
+                } catch (error) {
+                    console.log(error)
+                    document.getElementById(btn).innerHTML = `
+                            <button type="button" class="flex-shrink-0 btn-square bg-danger rounded-circle" onclick="unlock_colab('${id_colab}', '${colab_username}')" title="Colaborador bloqueado, presione para desbloquear">
+                                <i class="fas fa-user-lock text-white"></i>
+                            </button>
+                        `
+                    Swal.fire(
+                        'Error!',
+                        'No se pudo desbloquear, recarga la pagina e intente nuevamente',
+                        'error'
+                    )
+                }
+            } else {
+                Swal.fire(
+                    'Cancelado!',
+                    '',
+                    'error'
+                )
+            }
+        })
+    }
+
+    // INVITAR USUARIO POR CORREO 
+    async function send_email_user(email) {
+        console.log('funcion para invitar usuario por correo')
+        console.log(email)
+        let btn = 'btn_search_user'
+        function btn_charge(state){
+            if(state){
+                document.getElementById(btn).innerHTML = `
+                <div class="spinner-border text-secondary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>`
+            }else{
+                document.getElementById(btn).innerHTML = `<i class="fas fa-search"></i>`
+            }
+        }
+        if(email != ''){
+            btn_charge(true)
+            try {
+                await axios.post('/users/invite', {email: email})
+                .then(function (response){
+                    console.log(response);
+                    document.getElementById('input_search_user').classList.remove("is-invalid")
+                    document.getElementById('invalid_email').hidden = true
+                    document.getElementById('message_invite_email').innerHTML = `Se envio la invitación a <span class="fw-bold">${email}</span> correctamente`
+                    document.getElementById('input_search_user').classList.add("is-valid")
+                    btn_charge(false)
+                })
+                .catch(function (error){
+                    console.log(error)
+                    console.log('##########')
+                    console.log(error.response)
+                    document.getElementById('input_search_user').classList.add("is-invalid")
+                    document.getElementById('invalid_email').hidden = false
+                    btn_charge(false)
+                })
+            } catch (error) {
+                console.error(error);
+            }
+        } else {
+            btn_charge(false)
+            console.log('direccion de correo no valida')
+        }
+
+
+    }
+
+// -- # ----- CALL FUNCTION REFERENT BY ID ----- # -- //
+
+    // # ---- VERIFICATION TYPE DOCUMENT UPLOAD ---- # //
+    function verif_extencion(file){
+        // console.log(file.files[0].type)
+        if(file.files[0].type != 'application/pdf'){
+            file.value = ''
+            console.log("No PDF - El archivo seleccionado no es un documento PDF");
+        } else {
+            console.log("PDF - El archivo seleccionado PDF");
+        }
+    }
+
+    // # ---- END VERIFICATION TYPE DOCUMENT UPLOAD ---- # //
+
+    // # ---- ADD AUTHOR TO NEW THE REFERENT ---- # //
+    function remember_add(){
+        document.getElementById('remember_menssage').hidden = false
+    }
+
+    function add_author() {
+        let author_name = document.getElementById('author_name').value
+        let author_lastname = document.getElementById('author_lastname').value
+        let length_authors = authors.length
+        if(author_name != '' || author_lastname != ''){
+            console.log('add author')
+            let author = {
+                name: author_name,
+                lastname: author_lastname,
+                _id: length_authors
+            }
+
+            authors.push(author)
+            render_authors();    
+        }
+    }
+
+    // # ---- END ADD AUTHOR TO NEW THE REFERENT ---- # //
+
+    // # ---- RENDER ATHORS IN MODAL REFERENT ---- # //
+    function render_authors() { 
+        console.log('authors')
+        console.log(authors)
+        console.log('authors')
+        let render = ''
+        // if(authors.length != 0){
+            authors.forEach((author, i) => {
+                render += `
+                    ${author.name + ' ' + author.lastname}
+                    <a onclick="delete_author('${i}')" title="Eliminar autor">
+                        <i class="fas fa-times text-danger"></i>
+                    </a>,&nbsp;
+                `
+            })
+            document.getElementById('author_name').value = ''
+            document.getElementById('author_lastname').value = ''
+            document.getElementById('author_list').innerHTML = render
+        // }
+    }
+
+    // # ---- DELETE AUTHOR ---- # //
+    function delete_author(id_author){
+        console.log(id_author)
+        let authors_arr = []
+        authors.forEach((author, i) => {
+            if(i != id_author){
+                authors_arr.push(author)
+            }
+        })
+        authors = []
+        authors = authors_arr
+        // console.log(authors)
+        render_authors()
+    }
+
+// # ---- END RENDER ATHORS IN MODAL REFERENT ---- # //
+
+    // # ---- REQUEST POST NEW REFERENT ---- # //
+    async function post_register_referent() {
+        console.log('entra al registro')
+        let doc_type = document.getElementById('doc_type').value
+        let doc_area_tema = document.getElementById('area_tema').value
+        let doc_title = document.getElementById('doc_title').value
+        let year_publication = document.getElementById('year_publication').value
+        let country_publication = document.getElementById('country_publication').value
+        let ref_keywords = document.getElementById('ref_keywords').value
+        let institution_entity = document.getElementById('institution_entity').value
+        let indexing = document.getElementById('indexing').value
+        let categorization = document.getElementById('categorization').value
+        let ISDN_ISBN = document.getElementById('ISDN_ISBN').value
+        let DOI = document.getElementById('DOI').value
+        let doc_URL = document.getElementById('doc_URL').value
+        let abstract = document.getElementById('abstract').value
+        let file = document.getElementById('file_id')
+
+        let btn = document.getElementById('btn_post_referent')
+        btn.disabled = true;
+        btn.innerHTML = `
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        ` 
+
+        // 
+
+        if(doc_title !='' && doc_area_tema != '' && year_publication != '' && country_publication != '' && authors.length != 0){
+            console.log('send')
+           
+            let authors_str = ''
+            authors.forEach(author => {
+                authors_str += author.name + ';' + author.lastname + '#'
+            })
+
+            let formData = new FormData();
+
+            formData.append('doc_type', doc_type);
+            formData.append('doc_title', doc_title);
+            formData.append('doc_area_tema', doc_area_tema);
+            formData.append('year_publication', year_publication);
+            formData.append('country_publication', country_publication);
+            formData.append('ref_keywords', ref_keywords);
+            formData.append('institution_entity', institution_entity);
+            formData.append('indexing', indexing);
+            formData.append('categorization', categorization);
+            formData.append('ISDN_ISBN', ISDN_ISBN);
+            formData.append('DOI', DOI);
+            formData.append('doc_URL', doc_URL);
+            formData.append('authors', authors_str);
+            formData.append('abstract', abstract);
+            if(file.files[0]){
+                console.log('hay archivo')
+                formData.append('file_name', file.files[0].name.toLowerCase());
+                console.log(file.files[0])
+                formData.append('document', file.files[0]);
+            }else{
+                formData.append('file_name', '');
+            }
+            console.log(formData)
+            let url_api = '/vigTec/register-referent/' + vig_tec_id
+            axios({
+                method: 'post',
+                url: url_api,
+                data: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(function(response) {
+                console.log(response)
+                let message = response.data.message
+                if(response.status == 200){
+                    
+                    doc_title = ''
+                    country_publication = ''
+                    ref_keywords = ''
+                    institution_entity = ''
+                    Indexacion = ''
+                    categorization = ''
+                    ISDN_ISBN = ''
+                    DOI = ''
+                    doc_URL = ''
+                    abstract = ''
+
+                    btn.disabled = false;
+                    btn.innerHTML = `Añadir` 
+
+                    document.getElementById('author_name').classList.remove("is-invalid");
+                    document.getElementById('author_lastname').classList.remove("is-invalid");
+
+                    const form = document.getElementById('form_post_referent')
+                    Array.from(form.elements).forEach(element => {
+                        if(element.id == 'doc_title' || element.id == 'area_tema' || element.id == 'year_publication' || element.id == 'doc_title' || element.id == 'country_publication'){
+                            element.classList.remove("is-valid");
+                            element.classList.add("is-valid");
+                        }
+                    });
+
+                    alert_success(message)
+                    $("#referentModal").modal("hide")                    
+                    get_all_referents();
+                } else {
+                    alert_danger(message)
+                }
+                
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+        } else {
+            console.log('NO PASA')
+            btn.disabled = false;
+            btn.innerHTML = `Añadir`
+
+            const form = document.getElementById('form_post_referent')
+            Array.from(form.elements).forEach(element => {
+                if(element.id == 'doc_title' || element.id == 'area_tema' || element.id == 'year_publication' || element.id == 'doc_title' || element.id == 'country_publication'){
+                    if (!element.value) {
+                        element.classList.add("is-invalid");
+                        element.classList.remove("is-valid");
+                        valueGuardar = false
+                    } else {
+                        element.classList.remove("is-invalid");
+                        element.classList.add("is-valid");
+                        valueGuardar = true
+
+                    }
+                }
+            });
+
+            if(authors.length == 0){
+                document.getElementById('author_name').classList.add("is-invalid");
+                document.getElementById('author_lastname').classList.add("is-invalid");
+            } else {
+                document.getElementById('author_name').classList.remove("is-invalid");
+                document.getElementById('author_lastname').classList.remove("is-invalid");
+            }
+        }
+        
+    }   
+
+// # ---- END REQUEST POST NEW REFERENT ---- # //
+
+    async function get_referent(id_referent) {
+        let render_referent = ''
+
+        document.getElementById(id_referent).classList.add('table-active')
+        if(last_id_referent != ''){
+            document.getElementById(last_id_referent).classList.remove('table-active')
+        }
+
+        try {
+            let ref = referents_array.find(ref => ref._id === id_referent)
+            // console.log('ref')
+            // console.log(ref)
+
+            let authors = ''
+            if (ref.authors.length != 0) {
+                ref.authors.forEach((author, i) => {
+                    if (i == ref.authors.length-1) {
+                        authors += author.name + ' ' + author.lastname    
+                    } else {
+                        authors += author.name + ' ' + author.lastname + ', '
+                    }
+                })
+            }
+
+            let keywords = ''
+            if (ref.keywords.length != 0) {
+                ref.keywords.forEach((keyword, i) => {
+                    if (i == ref.authors.length-1) {
+                        keywords += keyword    
+                    } else {
+                        keywords += keyword + ', '
+                    }
+                })
+            }
+
+            render_referent = `
+            <div class="col-12">
+                ${ref.doc_URL ? `
+                    <div class="d-flex justify-content-center mt-3 mb-0" id="doc_URL_${ref._id}">
+                        <p>
+                            <a href="${ref.doc_URL}" target="_blank" title="Ir">
+                                <div class="text-center">
+                                    <div class="btn-square bg-light rounded-circle mb-4" style="width: 52px; height: 52px;">
+                                        <i class="fas fa-link fa-lg"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        </p>
+                        ${pUpdate? `
+                        <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${ref._id}', 'doc_URL')"
+                            title="Editar URL del documento"><i class="fas fa-pen fa-xs text-primary"></i>
+                        </a>
+                        `:``}
+                    </div>
+                    <p class="text-dark text-center mt-0"><b>Enlace documento</b></p>
+
+                    <hr>
+                ` : `
+                    <div class="mt-1" id="doc_URL_${ref._id}">
+                        ${pUpdate? `
+                        <a class="btn btn-link action-icon marginReferent" onclick="fast_edit_referent_item('${ref._id}', 'doc_URL')"
+                            title="Editar tipo de documento"><p class="text-muted marginReferent">Agregar URL <i class="fas fa-plus fa-xs text-primary"></i></p>
+                        </a>    
+                        `:``}
+                        
+                    </div>
+                `} 
+                
+                <div class="position-relative contenedor" id="doc_type_${ref._id}">
+                    <p class="lh-1" style="font-size: 14px; margin-bottom: 5px;">Tipo: ${ref.doc_type}</p>
+                    ${pUpdate? `
+                    <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${ref._id}', 'doc_type')" title="Editar tipo de documento">
+                        <i class="fas fa-pen fa-xs text-primary"></i>
+                    </a>
+                    `:``}
+                    
+                </div>
+
+                <div class="position-relative contenedor" id="doc_title_${ref._id}">
+                    <p class="lh-1 fs-5 fw-bold">${ref.doc_title}</p>
+                    ${pUpdate? `
+                    <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${ref._id}', 'doc_title')" title="Editar titulo referente">
+                        <i class="fas fa-pen fa-xs text-primary"></i>
+                    </a>
+                    `:``}
+                    
+                </div>
+
+                <div class="position-relative contenedor text-center" id="keywords_${ref._id}">
+                    <p class="lh-1 fs-6 fst-italic">${keywords}</p>
+                    ${pUpdate? `
+                    <!--<a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="edit_referent_keywords('${ref._id}')" title="Editar palabras clave">
+                        <i class="fas fa-pen fa-xs text-primary"></i>
+                    </a>-->
+                    `:``}
+                    
+                </div>
+
+                <div class="position-relative contenedor" id="authors_${ref._id}">
+                    <p class="lh-1 fs-6 text-primary" style="font-size: 14px;">${authors}</p>
+                    ${pUpdate? `
+                    <!--<a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="edit_referent_authors('${ref._id}')" title="Editar autores">
+                        <i class="fas fa-pen fa-xs text-primary"></i>
+                    </a>-->
+                    `:``}
+                    
+                </div>
+
+                <div class="position-relative contenedor" id="doc_area_tema_${ref._id}">
+                    <p class="lh-1 fs-6 fw-normal" style="font-size: 14px; margin-bottom: 5px;">Tema o área: ${ref.doc_area_tema}</p>
+                    ${pUpdate? `
+                    <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${ref._id}', 'doc_area_tema')" title="Editar tema o área">
+                        <i class="fas fa-pen fa-xs text-primary"></i>
+                    </a>
+                    `:``}
+                    
+                </div>
+
+                <div class="position-relative contenedor" id="year_publication_${ref._id}">
+                    <p class="lh-1 fs-6" style="font-size: 14px; margin-bottom: 5px;">Año: ${ref.year_publication} </p>
+                    ${pUpdate? `
+                    <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${ref._id}', 'year_publication')" title="Editar año de publicación">
+                        <i class="fas fa-pen fa-xs text-primary"></i>
+                    </a>    
+                    `:``}
+                    
+                </div>
+
+                <div class="position-relative contenedor" id="country_publication_${ref._id}">
+                    <p class="lh-1 fs-6" style="font-size: 14px; margin-bottom: 5px;">País: ${ref.country_publication}</p>
+                    ${pUpdate? `
+                    <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${ref._id}', 'country_publication')" title="Editar país de publicación">
+                        <i class="fas fa-pen fa-xs text-primary"></i>
+                    </a>
+                    `:``}
+                    
+                </div>
+
+                ${ref.abstract ? `
+                    <div class="position-relative contenedor" id="abstract_${ref._id}">
+                        <div class="fw-bolder">Abstract: </div>
+                        ${pUpdate? `
+                        <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${ref._id}', 'abstract')" title="Editar abstract">
+                            <i class="fas fa-pen fa-xs text-primary"></i>
+                        </a>
+                        `:``}
+                        
+                        <p class="lh-1 lim-text-5 mb-1" title="${ref.abstract}"> ${ref.abstract}</p>
+                    </div>
+                    ` : ``}
+
+                ${ref.institution_entity ? `
+                    <hr class="m-1">
+                    <div class="position-relative contenedor" id="institution_entity_${ref._id}">
+                        <p><span class="fw-bold">Institución: </span>${ref.institution_entity}</p>
+                        ${pUpdate? `
+                        <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${ref._id}', 'institution_entity')" title="Editar institución">
+                            <i class="fas fa-pen fa-xs text-primary"></i>
+                        </a>
+                        `:``}
+                        
+                    </div>
+                    ` : ``}
+                
+                ${ref.file_name ? `
+                    <a style="text-decoration: none;" href="/uploads/files/${ref.file_name}" target="_blank" title="Ver documento ">
+                        <div class="p-2">
+                            <div class="row" style="border: 1px solid red; border-radius: 15px;">
+                                <div class="col-2 m-2">
+                                        <i class="fas fa-file-pdf fa-2x text-danger"></i>
+                                </div>
+                                <div class="col-8">
+                                    <span class="text-primary text-break">${(ref.file_name).split('-')[1]}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                `: ``
+                }
+                
+                ${ref.indexing ? `
+                    <div class="position-relative contenedor" id="indexing_${ref._id}">
+                        <p class="marginReferent">Indexación: ${ref.indexing}</p>
+                        ${pUpdate? `
+                        <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${ref._id}', 'indexing')" title="Editar tipo de documento">
+                            <i class="fas fa-pen fa-xs text-primary"></i>
+                        </a>
+                        `:``}
+                        
+                    </div>
+                    ` : ``}
+
+                ${ref.categorization ? `
+                    <div class="position-relative contenedor" id="categorization_${ref._id}">
+                        <p class="marginReferent">Categorización: ${ref.categorization}</p>
+                        ${pUpdate? `
+                        <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${ref._id}', 'categorization')" title="Editar tipo de documento">
+                            <i class="fas fa-pen fa-xs text-primary"></i>
+                        </a>
+                        `:``}
+                        
+                    </div>
+                    ` : ``}
+
+                ${ref.ISDN_ISBN ? `
+                    <div class="position-relative contenedor" id="ISDN_ISBN_${ref._id}">
+                        <p class="marginReferent">ISDN o ISBN: ${ref.ISDN_ISBN}</p>
+                        ${pUpdate? `
+                        <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${ref._id}', 'ISDN_ISBN')" title="Editar tipo de documento">
+                            <i class="fas fa-pen fa-xs text-primary"></i>
+                        </a>
+                        `:``}
+                        
+                    </div>
+                    ` : ``}
+
+                ${ref.DOI ? `
+                    <div class="position-relative contenedor" id="DOI${ref._id}">
+                        <p class="marginReferent">DOI: <a href="${ref.DOI}">${ref.DOI}</a></p>
+                        ${pUpdate? `
+                        <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${ref._id}', 'DOI')" title="Editar tipo de documento">
+                            <i class="fas fa-pen fa-xs text-primary"></i>
+                        </a>
+                        `:``}
+                        
+                    </div>
+                    ` : ``}
+
+                ${pDelete? `
+                <div class="d-grid gap-2 m-3">
+                    <button type="button" class="btn btn-danger" onclick="delete_referent('${ref._id}')"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                </div>
+                `:``}
+                
+            </div>
+            `
+
+            document.getElementById('div_referent').innerHTML = render_referent
+        } catch (error) {
+            console.log(error)
+        }
+        
+        last_id_referent = id_referent
+    }
+
+    function fast_edit_referent_item(id_referent, edit_type){
+
+        let div_content  = document.getElementById(edit_type + '_' + id_referent)
+        let texto = div_content.getElementsByTagName("p")[0].innerText
+        let array_texto = []
+        
+        if(edit_type != 'doc_title' && edit_type != 'abstract' && edit_type != 'doc_URL'){
+            array_texto = texto.split(':')
+            console.log('sepr :_')
+            if(array_texto.length > 2){
+                console.log('in for')
+                texto = ''
+                for (let index = 1; index < array_texto.length; index++) {
+                    if(index == array_texto.length-1){
+                        texto += array_texto[index]
+                    } else {
+                        texto += array_texto[index] + ':'
+                    }
+                }
+            } else {
+                console.log('no in for')
+                texto = (array_texto[1])
+            }
+        } else {
+            array_texto.push('other')
+        }
+
+        texto = texto.trim()
+
+        if (edit_type == 'year_publication'){
+            div_content.innerHTML = `
+            <div class="row">
+                <div class="col-10">
+                    <input type="number" class="form-control" id="edit_${edit_type}_${id_referent}" value="${texto}" min="1900" max="2023">
+                </div>
+                <div class="col-1">
+                    <button class="btn btn-sm btn-primary mt-1" onclick="update_referent('${id_referent}', '${edit_type}', '${array_texto[0]}')"><i class="far fa-save"></i></button>
+                </div>
+            </div>
+            `
+        } else if(edit_type == 'doc_title' || edit_type == 'abstract') {
+            div_content.innerHTML = `
+            <div class="row">
+                <div class="col-10">
+                    <textarea class="form-control" style="height: 100px" id="edit_${edit_type}_${id_referent}">${texto}</textarea>
+                </div>
+                <div class="col-1">
+                    <button class="btn btn-sm btn-primary mt-1" onclick="update_referent('${id_referent}', '${edit_type}', '${array_texto[0]}')"><i class="far fa-save"></i></button>
+                </div>
+            </div>
+            `
+        } else if (edit_type == 'doc_URL') {
+            let urle = div_content.getElementsByTagName("a")[0].href
+            div_content.innerHTML = `
+            <div class="row">
+                <div class="col-10">
+                    <input type="text" class="form-control" id="edit_${edit_type}_${id_referent}" value="${urle}">
+                </div>
+                <div class="col-1">
+                    <button class="btn btn-sm btn-primary mt-1" onclick="update_referent('${id_referent}', '${edit_type}', '${array_texto[0]}')"><i class="far fa-save"></i></button>
+                </div>
+            </div>
+            `
+        } else {
+            div_content.innerHTML = `
+            <div class="row">
+                <div class="col-10">
+                    <input type="text" class="form-control" id="edit_${edit_type}_${id_referent}" value="${texto}">
+                </div>
+                <div class="col-1">
+                    <button class="btn btn-sm btn-primary mt-1" onclick="update_referent('${id_referent}', '${edit_type}', '${array_texto[0]}')"><i class="far fa-save"></i></button>
+                </div>
+            </div>
+            `
+        }
+    }   
+
+    async function update_referent(id_referent, edit_type, text_desc){
+        console.log('entra a la actualizacion de dato rapido')
+        console.log('data int: ' + id_referent + ' : ' + edit_type)
+        let div_content_edit = document.getElementById(edit_type + '_' + id_referent)
+        let data = document.getElementById('edit_' + edit_type + '_' + id_referent)
+        let update_edit = true 
+        console.log('data edit: ' + data.value)
+        if(edit_type == 'doc_URL' || edit_type == 'doc_title' || edit_type == 'doc_area_tema' || edit_type == 'year_publication' || edit_type == 'country_publication'){
+            if(data.value == ''){
+                update_edit = false
+            } else {
+                update_edit = true
+            }
+        }
+
+        console.log(update_edit)
+        if(update_edit){
+            console.log('envio axios')
+            axios.put('/vigTec/' + vig_tec_id + '/update-referent/' + id_referent, {
+                    'edit_type': edit_type,
+                    'data': data.value,
+                })
+                .then(function(response) {
+                    console.log(response)
+                    let message = response.data.message
+                    if(response.status == 200){
+                        // $("#modal_edit_ficha_vig_tec").modal("hide")
+                        if(edit_type != 'doc_title' && edit_type != 'abstract' && edit_type != 'doc_URL'){
+                            div_content_edit.innerHTML = `
+                            <p class="lh-1 fs-6 fw-normal">${text_desc}: ${data.value} </p>
+                            <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${id_referent}', '${edit_type}')" title="Editar ${text_desc.toLowerCase()}">
+                                <i class="fas fa-pen fa-xs text-primary"></i>
+                            </a>
+                            `
+                        } else if (edit_type == 'doc_title'){
+                            div_content_edit.innerHTML = `
+                            <p class="lh-1 fs-4 fw-normal fw-bold">${data.value} </p>
+                            <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${id_referent}', '${edit_type}')" title="Editar titulo referente">
+                                <i class="fas fa-pen fa-xs text-primary"></i>
+                            </a>
+                            `
+                        } else if (edit_type == 'abstract'){
+                            div_content_edit.innerHTML = `
+                            <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${id_referent}', 'abstract')" title="Editar abstract">
+                                <i class="fas fa-pen fa-xs text-primary"></i>
+                            </a>
+                            <div class="fw-bolder">Abstract: </div>
+                            <p> ${data.value}</p>
+                            `
+                        } else if (edit_type == 'doc_URL'){
+                            div_content_edit.innerHTML = `
+                                <a href="${data.value}" target="_blank" title="Ir">
+                                    <p class="fw-lighter lim-text-2">URL Documento </p>
+                                </a>
+                                <a class="btn btn-link action-icon edid position-absolute top-0 end-0" onclick="fast_edit_referent_item('${id_referent}', 'doc_URL')" title="Editar tipo de documento">
+                                    <i class="fas fa-pen fa-xs text-primary"></i>
+                                </a>
+                            `
+                        }
+                        
+                        alert_success(message)
+
+                    } else {
+
+                    }
+                    
+                })
+                .catch(function(error){
+                    console.log(error)
+                })
+        } else {
+            data.classList.add("is-invalid");
+        }
+    }
+
+    async function delete_referent(id_referent){
+        Swal.fire({
+            title: 'Estas seguro?',
+            text: "Esta accion no se puede deshacer!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Si, Eliminar!'
+        }).then(async(result) => {
+            if (result.isConfirmed) {
+                try {
+                    const respuesta = await axios.delete('/vigTec/' + vig_tec_id + '/delete-referent/' + id_referent)
+                    console.log(respuesta.status);
+                    let message = respuesta.data.message
+                    if(respuesta.status == 200){
+                        alert_success(message)
+                        last_id_referent = ''
+                        document.getElementById('div_referent').innerHTML = ''
+                        get_all_referents();
+                    } else {
+                        message += respuesta.status
+                        alert_danger(message)
+                    }
+                    
+                } catch (error) {
+                    console.log(error)
+                    Swal.fire(
+                        'Error!',
+                        'No se pudo eliminar',
+                        'error'
+                    )
+                }
+            } else {
+                Swal.fire(
+                    'Cancelado!',
+                    '',
+                    'error'
+                )
+            }
+        })
+    }
+
+    async function get_update_referent(id_referent){
+        document.getElementById('btn_post_referent').hidden = true
+        document.getElementById('btn_update_referent').hidden = false
+        console.log('get update referent')
+
+        let url = `/referent/${vig_tec_id}/ref/${id_referent}`;
+        axios.get(url)
+            .then(function(response) {
+                let jsonData = response.data
+                console.log(jsonData)
+
+                document.getElementById('btn_update_referent').value = jsonData._id
+
+                document.getElementById('doc_type').value = jsonData.doc_type
+                document.getElementById('area_tema').value = jsonData.doc_area_tema
+                document.getElementById('doc_title').value = jsonData.doc_title
+                document.getElementById('year_publication').value = jsonData.year_publication
+                document.getElementById('country_publication').value = jsonData.country_publication
+                document.getElementById('institution_entity').value = jsonData.institution_entity
+                document.getElementById('indexing').value = jsonData.indexing
+                document.getElementById('categorization').value = jsonData.categorization
+                document.getElementById('ISDN_ISBN').value = jsonData.ISDN_ISBN
+                document.getElementById('DOI').value = jsonData.DOI
+                document.getElementById('doc_URL').value = jsonData.doc_URL
+                document.getElementById('abstract').value = jsonData.abstract
+
+                let keywords = ''
+                if (jsonData.keywords.length != 0){
+                    jsonData.keywords.forEach((keyword, i) => {
+                        if (i == jsonData.authors.length-1) {
+                            keywords += keyword    
+                        } else {
+                            keywords += keyword + ', '
+                        }
+                    })
+                }
+                document.getElementById('ref_keywords').value = keywords
+
+                authors = []
+                authors =  jsonData.authors
+
+                render_authors()
+
+                if(jsonData.file_name != ''){
+                    document.getElementById('div_update_file').hidden = false
+                    document.getElementById('div_post_file').hidden = true
+                    let render_file = `
+                    
+                        <div class="p-2">
+                            <div class="row" style="border: 1px solid red; border-radius: 15px;">
+                                <div class="col-2 m-2">
+                                    <i class="fas fa-file-pdf fa-2x text-danger"></i>
+                                </div>
+                                <div class="col-7 mt-2">
+                                    <a style="text-decoration: none;" href="/uploads/files/${jsonData.file_name}" target="_blank" title="Ver documento ">
+                                        ${(jsonData.file_name).split('-')[1]}
+                                    </a>
+                                </div>
+                                <div class="col-2 m-2 text-end">
+                                    <button type="button" href="#" class="btn btn-link" id="btn_delete_archivo" onclick="delete_file('${jsonData._id}')" title="Eliminar documento PDF">
+                                        <i class="fas fa-times fa-2x text-danger"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    
+                    `
+                    document.getElementById('div_update_file').innerHTML = render_file
+                }
+                // document.getElementById('file_id')
+                $("#referentModal").modal("show") 
+            })
+            .catch(function (error){
+                console.log(error)
+                alert_danger(error.response)
+            })
+    }
+
+    async function delete_file(id_referent){
+        console.log('delete file referent')
+        console.log(id_referent)
+        let btn = "btn_delete_archivo"
+
+        Swal.fire({
+            title: 'Estas seguro?',
+            text: "Esta accion no se puede deshacer!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                document.getElementById(btn).innerHTML = `
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                `
+                document.getElementById(btn).disabled = true;
+
+                try {
+                    let url = `/referent/${vig_tec_id}/ref/${id_referent}/delete/file`
+                    await axios.put(url, {})
+                    .then(function (response) {
+                        console.log(response);
+                        document.getElementById('div_update_file').hidden = true
+                        document.getElementById('div_post_file').hidden = false
+                        
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                        document.getElementById(btn).innerHTML = `<i class="fas fa-times fa-2x text-danger"></i>`;
+                        document.getElementById(btn).disabled = false;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: error.response.data,
+                            footer: '<p class="text-muted">intente recargando la pagina</p>'
+                        })
+                    })
+                // console.log(respuesta.data.refOnly.descripcion);
+                }catch(error){
+                    console.log(error)
+                } 
+
+            } else {
+                Swal.fire(
+                    'Cancelado!',
+                    'No se elimino el archivo',
+                    'error'
+                )
+            }
+        })
+    }
+
+    async function update_register_referent(id_referent){
+        console.log('update')
+        console.log(id_referent)
+
+        let doc_type = document.getElementById('doc_type').value
+        let doc_area_tema = document.getElementById('area_tema').value
+        let doc_title = document.getElementById('doc_title').value
+        let year_publication = document.getElementById('year_publication').value
+        let country_publication = document.getElementById('country_publication').value
+        let ref_keywords = document.getElementById('ref_keywords').value
+        let institution_entity = document.getElementById('institution_entity').value
+        let indexing = document.getElementById('indexing').value
+        let categorization = document.getElementById('categorization').value
+        let ISDN_ISBN = document.getElementById('ISDN_ISBN').value
+        let DOI = document.getElementById('DOI').value
+        let doc_URL = document.getElementById('doc_URL').value
+        let abstract = document.getElementById('abstract').value
+        let file = document.getElementById('file_id')
+
+        let btn = document.getElementById('btn_update_referent')
+        btn.disabled = true;
+        btn.innerHTML = `
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        ` 
+
+        // 
+
+        if(doc_title !='' && doc_area_tema != '' && year_publication != '' && country_publication != '' && authors.length != 0){
+            console.log('send')
+           
+            let authors_str = ''
+            authors.forEach(author => {
+                authors_str += author.name + ';' + author.lastname + '#'
+            })
+
+            let formData = new FormData();
+
+            formData.append('doc_type', doc_type);
+            formData.append('doc_title', doc_title);
+            formData.append('doc_area_tema', doc_area_tema);
+            formData.append('year_publication', year_publication);
+            formData.append('country_publication', country_publication);
+            formData.append('ref_keywords', ref_keywords);
+            formData.append('institution_entity', institution_entity);
+            formData.append('indexing', indexing);
+            formData.append('categorization', categorization);
+            formData.append('ISDN_ISBN', ISDN_ISBN);
+            formData.append('DOI', DOI);
+            formData.append('doc_URL', doc_URL);
+            formData.append('authors', authors_str);
+            formData.append('abstract', abstract);
+            if(file.files[0]){
+                console.log('hay archivo')
+                formData.append('file_name', file.files[0].name.toLowerCase());
+                console.log(file.files[0])
+                formData.append('document', file.files[0]);
+            }else{
+                formData.append('file_name', '');
+            }
+            console.log(formData)
+            let url_api = `/referent/${vig_tec_id}/ref/${id_referent}/update`
+            axios({
+                method: 'put',
+                url: url_api,
+                data: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(function(response) {
+                console.log(response)
+                let message = response.data.message
+                if(response.status == 200){
+                    
+                    btn.disabled = false;
+                    btn.innerHTML = `Añadir` 
+
+                    document.getElementById('author_name').classList.remove("is-invalid");
+                    document.getElementById('author_lastname').classList.remove("is-invalid");
+
+                    const form = document.getElementById('form_post_referent')
+                    Array.from(form.elements).forEach(element => {
+                        if(element.id == 'doc_title' || element.id == 'area_tema' || element.id == 'year_publication' || element.id == 'doc_title' || element.id == 'country_publication'){
+                            element.classList.remove("is-valid");
+                            element.classList.add("is-valid");
+                        }
+                    });
+
+                    alert_success(message)
+                    $("#referentModal").modal("hide")                    
+                    get_all_referents();
+                } else {
+                    alert_danger(message)
+                }
+                
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+        } else {
+            console.log('NO PASA')
+            btn.disabled = false;
+            btn.innerHTML = `Añadir`
+
+            const form = document.getElementById('form_post_referent')
+            Array.from(form.elements).forEach(element => {
+                if(element.id == 'doc_title' || element.id == 'area_tema' || element.id == 'year_publication' || element.id == 'doc_title' || element.id == 'country_publication'){
+                    if (!element.value) {
+                        element.classList.add("is-invalid");
+                        element.classList.remove("is-valid");
+                        valueGuardar = false
+                    } else {
+                        element.classList.remove("is-invalid");
+                        element.classList.add("is-valid");
+                        valueGuardar = true
+
+                    }
+                }
+            });
+
+            if(authors.length == 0){
+                document.getElementById('author_name').classList.add("is-invalid");
+                document.getElementById('author_lastname').classList.add("is-invalid");
+            } else {
+                document.getElementById('author_name').classList.remove("is-invalid");
+                document.getElementById('author_lastname').classList.remove("is-invalid");
+            }
+        }
+
+    }
+
+    function clear_modal_referent(){
+        document.getElementById('area_tema').value = ''
+        document.getElementById('doc_title').value = ''
+        document.getElementById('year_publication').value = '2023'
+        document.getElementById('country_publication').value = ''
+        document.getElementById('institution_entity').value = ''
+        document.getElementById('indexing').value = ''
+        document.getElementById('categorization').value = ''
+        document.getElementById('ISDN_ISBN').value = ''
+        document.getElementById('DOI').value = ''
+        document.getElementById('doc_URL').value = ''
+        document.getElementById('abstract').value = ''
+
+        document.getElementById('btn_post_referent').hidden = false
+        document.getElementById('btn_update_referent').hidden = true
+        
+        document.getElementById('div_update_file').hidden = true
+        document.getElementById('div_post_file').hidden = false
+
+        authors = []
+
+        render_authors()
+
+        $("#referentModal").modal("show") 
+    }
+
+    function pre_import_bit_text(){
+        $("#referentModal").modal("hide") 
+        $("#BibTex_modal").modal("show") 
+    }
+    
+    function import_bit_text() {
+        authors = []
+
+        let BibTex = document.getElementById('BibTex').value
+        console.log(BibTex)
+
+        let BibTex_arr = BibTex.split('\n')
+        console.log(BibTex_arr)
+
+        try {
+
+            BibTex_arr.forEach(element => {
+                let data = element.split('=')
+                data[0] = data[0].trim()
+
+                if(!data[1]) return
+                data[1] = data[1].replace("{", "");
+                data[1] = data[1].replace("}", "");
+
+                console.log(data[1])
+                if(data[0] == 'title'){
+                    document.getElementById('doc_title').value = data[1]
+                } else if(data[0] == 'journal'){
+                    data[1] = data[1].replace(",", "");
+                    document.getElementById('institution_entity').value = data[1]
+                } else if(data[0] == 'year'){
+                    data[1] = data[1].replace(",", "");
+                    document.getElementById('year_publication').value = data[1]
+                } else if(data[0] == 'issn'){
+                    document.getElementById('ISDN_ISBN').value = data[1]
+                } else if(data[0] == 'doi'){
+                    document.getElementById('DOI').value = data[1]
+                } else if(data[0] == 'url'){
+                    document.getElementById('doc_URL').value = data[1]
+                } else if(data[0] == 'abstract'){
+                    document.getElementById('abstract').value = data[1]
+                } else if(data[0] == 'author'){
+                    let text = data[1]
+                    if(!text) return
+                    while (text.indexOf(',') != -1){
+                        console.log(text.indexOf(','))
+                        text = text.replace(",", "");
+                    }
+                    let authors_this = text.split(' and ')
+                    authors_this.forEach((item, i) => {
+                        let aut = item.split(' ')
+                        console.log('add author')
+                        let author = {
+                            name: aut[0],
+                            lastname: aut[1],
+                            _id: i
+                        }
+
+                        authors.push(author)
+                    })
+                    render_authors()
+                    console.log(authors)
+                    // document.getElementById('abstract').value = text
+                } 
+            })
+
+            $("#referentModal").modal("show") 
+            $("#BibTex_modal").modal("hide") 
+            document.getElementById('BibTex').value = ''
+        } catch (error) {
+            console.log(error)   
+        }
+    }
+
+    // ---------------------------------------------------------------------------------------------- //
+
+    // ---------------- FUNCTIONS ART STATE --------------------------------------------------------- //
+
+    // --- # AGREGAR CAMPO EXTRA # ---- //
+    function add_extra_camp(){
+        let titulo_extra_camp = document.getElementById('title_extra_camp')
+        let desc_extra_camp = document.getElementById('descripcion_extra_camp')
+        let add_camp = true
+
+        if(!titulo_extra_camp.value){
+            titulo_extra_camp.classList.add("is-invalid");
+            titulo_extra_camp.classList.remove("is-valid");
+            document.getElementById('alert_message_extra_camp').hidden = false
+            add_camp = false
+        } else {
+            titulo_extra_camp.classList.add("is-valid");
+            titulo_extra_camp.classList.remove("is-invalid");
+        }
+     
+        if(!desc_extra_camp.value){
+            desc_extra_camp.classList.add("is-invalid");
+            desc_extra_camp.classList.remove("is-valid");
+            document.getElementById('alert_message_extra_camp').hidden = false
+            add_camp = false
+        } else {
+            desc_extra_camp.classList.add("is-valid");
+            desc_extra_camp.classList.remove("is-invalid");
+        }
+
+        if(add_camp){
+            let extra_camp_obj = {
+                'title': titulo_extra_camp.value,
+                'description': desc_extra_camp.value,
+                'index': art_state_extra_camps.length
+            }
+            art_state_extra_camps.push(extra_camp_obj)
+            desc_extra_camp.value = ''
+            desc_extra_camp.classList.remove("is-valid");
+            titulo_extra_camp.value = ''
+            titulo_extra_camp.classList.remove("is-valid");
+            document.getElementById('alert_message_extra_camp').hidden = true
+
+            render_extra_camps()
+        }
+    }
+
+    function render_extra_camps() {
+        let render_exta_camps = ''
+        art_state_extra_camps.forEach(item => {
+            render_exta_camps += `
+            <tr>
+                <td>${item.title}</td>
+                <td>${item.description}</td>
+                <td class="text-center"><button type="button" class="btn btn-danger" onclick="delete_extra_camp('${item.index}')"><i class="fas fa-trash-alt"></i></button></td>
+            </tr>
+            `
+        })
+        document.getElementById('table_extra_camps').hidden = false
+        document.getElementById('tbody_extra_camps').innerHTML = render_exta_camps
+        // if(art_state_extra_camps.length == 0){
+        //     document.getElementById('table_extra_camps').hidden = true
+        // }
+    }
+
+    async function delete_extra_camp(id_camp){
+        console.log(id_camp)
+        let camps_arr = []
+        await art_state_extra_camps.forEach((camp, i) => {
+            console.log(i)
+            if(camp.index != id_camp){
+                camps_arr.push(camp)
+            }
+        })
+
+        art_state_extra_camps = []
+        art_state_extra_camps = camps_arr
+
+        render_extra_camps()
+    }
+    // --- # AGREGAR CAMPO EXTRA # ---- //
+
+    // --- #  FUNCTIONS ART STATE # ---- //
+    async function post_art_state() {
+    
+        let resumen = document.getElementById('resumen_art_state').value
+        let observaciones = document.getElementById('observaciones_art_state').value
+        let description = document.getElementById('description_art_state').value
+        let conclusiones = document.getElementById('conclusiones_art_state').value
+
+        let btn = document.getElementById('btn_post_art_state')
+        btn.disabled = true;
+        btn.innerHTML = `
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        `
+
+        const form = document.getElementById('form_post_art_state')
+        Array.from(form.elements).forEach(element => {
+            if (!element.value) {
+                element.classList.add("is-invalid");
+                element.classList.remove("is-valid");
+                valueGuardar = false
+            } else {
+                element.classList.remove("is-invalid");
+                element.classList.add("is-valid");
+                valueGuardar = true
+
+            }
+        });
+
+        if(resumen !='' && description != ''){
+
+            axios.post('/artState/register/' + vig_tec_id, {
+                resumen,
+                observaciones,
+                description,
+                conclusiones,
+                'extra_camps': art_state_extra_camps
+            })
+            .then(function(response) {
+                console.log(response)
+                let message = response.data.message
+                if(response.status == 200){
+
+                    Array.from(form.elements).forEach(element => {
+                        element.value = ''
+                        element.classList.remove("is-valid");
+                    });
+
+                    btn.disabled = false;
+                    btn.innerHTML = `Generar`
+                    
+                    alert_success(message);
+                    $("#modal_art_state").modal("hide");
+                    get_all_referents();
+                } else {
+                    btn.disabled = false;
+                    btn.innerHTML = `Generar`
+                    alert_danger(message);
+
+                }
+                
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+        } else {
+            console.log('NO PASA')
+            btn.disabled = false;
+            btn.innerHTML = `Generar`
+        }
+        
+    }
+
+    function hide_buttons(){
+        document.getElementById('btn_add_problem').style.display = ''; // show
+        document.getElementById('btn_update_problem').style.display = 'none'; // hide
+        document.getElementById('title').value = ''
+        document.getElementById('sigla').value = ''
+        document.getElementById('description').value = ''
+    }
+    
+        // --- # FAST EDIT COMPONENTS ART STATE # ---- //
+    function fast_edit_art_state(art_state_id, edit_type){
+        let content = document.getElementById(edit_type)
+        let text = content.innerText
+
+        let render_edit_block = `
+        <div class="row">
+            <div class="col-11 form-floating">
+                <textarea class="form-control" id="${edit_type}_edit" placeholder="" style="height: 100px">${text}</textarea>
+                <label for="${edit_type}_edit">Editar</label>
+            </div>
+            <div class="col-1">
+                <button type="button" class="btn btn-primary" onclick="update_component_art_state('${art_state_id}', '${edit_type}')"><i class="fas fa-save"></i></button>
+            </div>
+        </div>
+        `
+        content.innerHTML = render_edit_block
+        document.getElementById(edit_type + '_btn').style.display = 'none'
+    }
+
+            // --- # UPDATE COMPONENT TO DB # ---- //
+    async function update_component_art_state(art_state_id, edit_type){
+        let data = document.getElementById(edit_type + '_edit')
+        if(data != ''){
+            axios.put('/artState/' + vig_tec_id + '/update/' + art_state_id, {
+                    'edit_type': edit_type,
+                    'data': data.value,
+                })
+                .then(function(response) {
+                    console.log(response.data)
+                    document.getElementById(edit_type + '_btn').style.display = ''
+                    document.getElementById(edit_type).innerHTML = `${data.value}`
+
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+        }
+    }
+
+            // --- # UPDATE COMPONENT TO DB # ---- //
+
+        // --- # FAST EDIT COMPONENTS ART STATE # ---- //
+
+    async function get_update_art_state(){
+        
+        console.log(art_state_global)
+
+        document.getElementById('btn_update_art_state').hidden = false
+
+        document.getElementById('resumen_art_state').value = art_state_global.resumen
+        document.getElementById('observaciones_art_state').value = art_state_global.observaciones
+        document.getElementById('description_art_state').value = art_state_global.description
+        document.getElementById('conclusiones_art_state').value = art_state_global.conclusiones
+
+        document.getElementById('btn_post_art_state').hidden = true
+        art_state_extra_camps = []
+        if(art_state_global.extra_camps.length > 0){
+            
+            art_state_global.extra_camps.forEach((camp, i) => {
+                let extra_camp_obj = {
+                    'title': camp.title,
+                    'description': camp.description,
+                    'index': camp.index
+                }
+                art_state_extra_camps.push(extra_camp_obj)
+            })
+            document.getElementById('table_extra_camps').hidden = false
+            render_extra_camps()
+        }
+
+        $("#modal_art_state").modal("show") 
+    }
+
+    async function update_art_state(){
+        let resumen = document.getElementById('resumen_art_state').value
+        // let observaciones = document.getElementById('observaciones_art_state').value
+        let description = document.getElementById('description_art_state').value
+        // let conclusiones = document.getElementById('conclusiones_art_state').value
+
+        let btn = document.getElementById('btn_update_art_state')
+        btn.disabled = true;
+        btn.innerHTML = `
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        `
+
+        const form = document.getElementById('form_post_art_state')
+        Array.from(form.elements).forEach(element => {
+            if (!element.value) {
+                element.classList.add("is-invalid");
+                element.classList.remove("is-valid");
+                valueGuardar = false
+            } else {
+                element.classList.remove("is-invalid");
+                element.classList.add("is-valid");
+                valueGuardar = true
+
+            }
+        });
+
+        if(resumen !='' && description != ''){
+
+            let url = `/artState/update/${vig_tec_id}/${art_state_global._id}`
+            axios.put(url, {
+                resumen,
+                description,
+                'extra_camps': art_state_extra_camps
+            })
+            .then(function(response) {
+                console.log(response)
+                let message = response.data.message
+                if(response.status == 200){
+
+                    Array.from(form.elements).forEach(element => {
+                        element.value = ''
+                        element.classList.remove("is-valid");
+                    });
+
+                    btn.disabled = false;
+                    btn.innerHTML = `Generar`
+                    
+                    alert_success(message);
+                    $("#modal_art_state").modal("hide");
+                    get_all_referents();
+                } else {
+                    btn.disabled = false;
+                    btn.innerHTML = `Generar`
+                    alert_danger(message);
+
+                }
+                
+            })
+            .catch(function(error){
+                console.log(error)
+                alert_danger(error.response.data.message);
+
+            })
+        } else {
+            console.log('NO PASA')
+            btn.disabled = false;
+            btn.innerHTML = `Generar`
+        }
+    }
+
+    async function print_informe(){
+        const options = {
+            margin: 1,
+            filename: 'cidtca.pdf',
+            image: { 
+                type: 'jpeg', 
+                quality: 0.98 
+            },
+            html2canvas: { 
+                scale: 2 
+            },
+            jsPDF: { 
+                unit: 'in', 
+                format: 'letter', 
+                orientation: 'portrait' 
+            }
+        }
+        let element = document.getElementById('print_art_state')
+        let worker = await html2pdf().from(element).set(options).toPdf().output('blob').then((data) => {
+            // console.log(data)
+            let fileURL = URL.createObjectURL(data);
+            window.open(fileURL);
+        })
+    }
+
+    async function report_generate(){
+        console.log('DataGlobal')
+        console.log(DataGlobal)
+
+        let render_report = ''
+        let render_keys = ''
+
+        DataGlobal.keywords.forEach((keys, i) => {
+            if(i == DataGlobal.keywords.length-1){
+                render_keys += `${keys}`
+            } else {
+                render_keys += `${keys}, `
+            }
+        })
+
+        let años = []
+        let authors = 0
+        let paises = []
+        let render_paises = ''
+        let temas = []
+        let render_temas = ''
+        DataGlobal.referents.forEach((ref, i) => {
+            años.push(parseInt(ref.year_publication))
+            authors += ref.authors.length
+            if(! paises.find(pais => pais == ref.country_publication)){
+                paises.push(ref.country_publication)
+            }
+
+            if(! temas.find(temas => temas == ref.doc_area_tema)){
+                temas.push(ref.doc_area_tema)
+            }
+        })
+
+        paises.forEach(pais => {
+            render_paises += `${pais}, ` 
+        })
+
+        temas.forEach(tema => {
+            render_temas += `${tema}, ` 
+        })
+
+        console.log(años)
+
+        render_report = `
+            <div class="row">
+                <p class="fst-italic text-end">Ficha creada: ${DataGlobal.createdAt.slice(0,10)}</p>
+                <p class="fs-2 fw-bold text-center">${DataGlobal.title_ficha}</p>
+                <p class="fs-4 text-center">${DataGlobal.area_tema}</p>
+                <p class="text-center">${render_keys}</p>
+                <p class="">Sector: ${DataGlobal.sector} - Poblacion: ${DataGlobal.poblacion}</p>
+                <p class="fw-bold">Documentros registrados: ${DataGlobal.referents.length}</p>
+                <div class="col-10 x_content mb-3 pe-4">
+                    <canvas id="chart_referents"></canvas>
+                </div>
+                <p>Rango de los años de los documentos almacenados: 
+                    <span class="fw-bold">Minimo: </span>${Math.min(...años)} -
+                    <span class="fw-bold">Maximo: </span>${Math.max(...años)}
+                </p>
+                <p>Autores de los documentos consultados: <span class="fw-bold">${authors}</span></p>
+                <p>Promedio de autores por documento: <span class="fw-bold">${(authors/DataGlobal.referents.length).toFixed(2)}</span></p>
+                <p>Países de los documentos consultados: <span class="fw-bold">${render_paises}</span></p>
+                <div class="col-10 x_content mb-3 pe-4">
+                    <canvas id="chart_categorization"></canvas>
+                </div>
+                <p>Temas de los documentos consultados: <span class="fw-bold">${render_temas}</span></p>
+            </div>
+        `
+        document.getElementById('div_report').innerHTML = render_report
+
+        $("#report_modal").modal("show") 
+
+        render_chart_referents()
+        render_chart_categorization()
+    }
+
+    function render_chart_referents(){
+        let data_referents = []
+
+        DataGlobal.referents.forEach(ref => {
+
+            let doc = data_referents.find(data => data.type == ref.doc_type)
+            if(doc){
+                doc.valu = doc.valu + 1
+            }else{
+                data_referents.push({
+                    type: ref.doc_type,
+                    valu: 1
+                })
+            }
+            
+        })
+
+        console.log(data_referents)
+
+        let label_arr = []
+        let value_arr = []
+        let backgroundColor_arr = ['rgb(255, 0, 0, 0.2)','rgb(0, 255, 0, 0.2)', 'rgb(0, 0, 255, 0.2)', 'rgb(255, 255, 0, 0.2)', 'rgb(0, 255, 255, 0.2)', 'rgb(255, 0, 255, 0.2)',
+        'rgb(170, 0, 0, 0.2)', 'rgb(0, 170, 0, 0.2)', 'rgb(0, 0, 170, 0.2)', 'rgb(0, 255, 170, 0.2)', 'rgb(255, 0, 170, 0.2)']
+        let borderColor_arr = ['rgb(255, 0, 0, 1)', 'rgb(0, 255, 0, 1)', 'rgb(0, 0, 255, 1)', 'rgb(255, 255, 0, 1)', 'rgb(0, 255, 255, 1)', 'rgb(255, 0, 255, 1)', 
+        'rgb(170, 0, 0, 1)', 'rgb(0, 170, 0, 1)', 'rgb(0, 0, 170, 1)', 'rgb(0, 255, 170, 1)', 'rgb(255, 0, 170, 1)']
+        data_referents.forEach(data => {
+            label_arr.push(data.type)
+            value_arr.push(data.valu)
+        })
+
+        var ctx = document.getElementById("chart_referents").getContext("2d");
+
+        var mybarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: label_arr,
+                datasets: [
+                    {
+                        backgroundColor: backgroundColor_arr,
+                        borderColor: borderColor_arr,
+                        data: value_arr
+                    }
+                ]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                    display: true,
+                    text: "Tipo de documentos registrados"
+                },
+                scales:{
+                    yAxes:[{
+                        ticks: { 
+                            beginAtZero: true,
+                            stepSize: 0.5
+                        }
+                    }]
+                },
+            }
+        });
+    }
+
+    function render_chart_categorization(){
+        let data_categori = []
+
+        DataGlobal.referents.forEach(ref => {
+            if(ref.categorization != ''){
+                let doc = data_categori.find(data => data.type == ref.categorization)
+                console.log(doc)
+                if(doc){
+                    doc.valu = doc.valu + 1
+                }else{
+                    data_categori.push({
+                        type: ref.categorization,
+                        valu: 1
+                    })
+                }
+            }
+        })
+
+        console.log(data_categori)
+
+        let label_arr = []
+        let value_arr = []
+        let backgroundColor_arr = ['rgb(255, 0, 0, 0.2)','rgb(0, 255, 0, 0.2)', 'rgb(0, 0, 255, 0.2)', 'rgb(255, 255, 0, 0.2)', 'rgb(0, 255, 255, 0.2)', 'rgb(255, 0, 255, 0.2)',
+        'rgb(170, 0, 0, 0.2)']
+        let borderColor_arr = ['rgb(255, 0, 0, 1)', 'rgb(0, 255, 0, 1)', 'rgb(0, 0, 255, 1)', 'rgb(255, 255, 0, 1)', 'rgb(0, 255, 255, 1)', 'rgb(255, 0, 255, 1)', 
+        'rgb(170, 0, 0, 1)']
+        data_categori.forEach(data => {
+            label_arr.push(data.type)
+            value_arr.push(data.valu)
+        })
+
+        var ctx = document.getElementById("chart_categorization").getContext("2d");
+
+        var mybarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: label_arr,
+                datasets: [
+                    {
+                        backgroundColor: backgroundColor_arr,
+                        borderColor: borderColor_arr,
+                        data: value_arr
+                    }
+                ]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                    display: true,
+                    text: "Estadísticas de categorización"
+                },
+                scales:{
+                    yAxes:[{
+                        ticks: { 
+                            beginAtZero: true,
+                            stepSize: 0.5
+                        }
+                    }],
+                },
+            }
+        });
+    }
+
+    async function print_report(){
+        const options = {
+            margin: 1,
+            filename: 'report.pdf',
+            image: { 
+                type: 'jpeg', 
+                quality: 0.98 
+            },
+            html2canvas: { 
+                scale: 2 
+            },
+            jsPDF: { 
+                unit: 'in', 
+                format: 'letter', 
+                orientation: 'portrait' 
+            }
+        }
+        let element = document.getElementById('div_report')
+        let worker = await html2pdf().from(element).set(options).toPdf().output('blob').then((data) => {
+            // console.log(data)
+            let fileURL = URL.createObjectURL(data);
+            window.open(fileURL);
+        })
+    }
+
+    // ---------------------------------------------------------------------------------------------- //
+
+    window.onload = function() {
+        get_all_referents();
+        
+	}
+</script>

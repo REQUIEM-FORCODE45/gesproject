@@ -1,0 +1,308 @@
+<input type="hidden" name="" id="rol_usuario" value="<%= user.rol %>">
+
+<!-- MODAL INFO FICHA -->
+<div class="modal fade" id="modal_info" tabindex="-1" aria-labelledby="modal_infoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modal_infoLabel">Vigilancia</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="body_info">
+            ...
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+<!-- CONTENIDO VISTA -->
+
+<div class="container mt-2">
+    <div id="alerts"></div>
+    <div class="row g-0 feature-row">
+        <div class="col-md-6 col-lg-3 wow fadeIn bg-white" data-wow-delay="0.1s">
+            <div class="feature-item border h-100 p-5">
+                <div class="btn-square bg-light rounded-circle mb-4" style="width: 64px; height: 64px;">
+                    <i class="fas fa-paste fa-lg"></i>
+                </div>
+                <h5 class="mb-3" id="all_fichas">...</h5>
+                <p class="mb-0">Total de fichas registradas</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 wow fadeIn bg-white" data-wow-delay="0.3s">
+            <div class="feature-item border h-100 p-5">
+                <div class="btn-square bg-light rounded-circle mb-4" style="width: 64px; height: 64px;">
+                    <i class="fas fa-city fa-lg text-primary"></i>
+                </div>
+                <h5 class="mb-3" id="fichas_urbano">...</h5>
+                <p class="mb-0">Fichas enfocadas a la poblacion urbana</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 wow fadeIn bg-white" data-wow-delay="0.5s">
+            <div class="feature-item border h-100 p-5">
+                <div class="btn-square bg-light rounded-circle mb-4" style="width: 64px; height: 64px;">
+                    <i class="fas fa-campground fa-lg text-warning"></i>
+                </div>
+                <h5 class="mb-3" id="fichas_rural">...</h5>
+                <p class="mb-0">Fichas enfocadas a la poblacion rural</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 wow fadeIn bg-white" data-wow-delay="0.7s">
+            <div class="feature-item border h-100 p-5">
+                <div class="btn-square bg-light rounded-circle mb-4" style="width: 64px; height: 64px;">
+                    <i class="fas fa-city fa-lg text-primary"></i><i class="fas fa-campground fa-lg text-warning"></i>
+                </div>
+                <h5 class="mb-3" id="fichas_urbano_rural">...</h5>
+                <p class="mb-0">Fichas enfocadas a la poblacion urbana y rural</p>
+            </div>
+        </div>
+        <!-- <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.7s">
+            <div class="feature-item border h-100 p-5">
+                <div class="btn-square bg-light rounded-circle mb-4" style="width: 64px; height: 64px;">
+                    <i class="fas fa-ficha-times fa-lg text-danger"></i>
+                </div>
+                <h5 class="mb-3" id="fichas_desplazados">...</h5>
+                <p class="mb-0">Fichas enfocadas a la poblacion desplazada</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.7s">
+            <div class="feature-item border h-100 p-5">
+                <div class="btn-square bg-light rounded-circle mb-4" style="width: 64px; height: 64px;">
+                    <i class="fas fa-ficha-times fa-lg text-danger"></i>
+                </div>
+                <h5 class="mb-3" id="fichas_vulnerable">...</h5>
+                <p class="mb-0">Fichas enfocadas a la poblacion vulnerable o victimas de conflicto</p>
+            </div>
+        </div> -->
+    </div>
+    <!-- TABLE fichas -->
+    <div class="table-responsive mx-auto wow fadeInUp mt-2 mb-2 bg-white">
+        <table class="table table-centered table-hover mb-0">
+            <thead class="table-dark align-middle">
+                <tr>
+                    <th class="text-center" style="max-width: 150px;">Titulo</th>
+                    <th class="text-center">Area</th>
+                    <th class="text-center">Sector</th>
+                    <th class="text-center">Poblacion</th>
+                    <th class="text-center">Opciones</th>
+                </tr>
+            </thead>
+            <tbody id="fichas_list">
+                <!-- CONTENT fichas -->
+            </tbody>
+        </table>
+    </div>
+    <!--  END TABLE fichas -->
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    let rol_usuario = document.getElementById('rol_usuario').value
+
+    function alert_success(message) {
+        let alert = `
+            <div class="alert alert-success d-flex align-items-center alert-dismissible fade show" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                <div>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        document.getElementById('alerts').innerHTML += alert
+
+        $(".alert").delay(3000).slideUp(0, function() {
+            $(this).alert('close');
+        });
+    }
+
+    function alert_danger(message) {
+        let alert = `
+            <div class="alert alert-danger d-flex align-items-center alert-dismissible fade show" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#check-circle-fill"/></svg>
+                <div>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        document.getElementById('alerts').innerHTML += alert
+        
+        $(".alert").delay(3000).slideUp(0, function() {
+            $(this).alert('close');
+        });
+
+    }
+
+    async function get_all_fichas() {
+        let render_fichas = ''
+
+        let all_fichas = 0
+        let fichas_urbano = 0
+        let fichas_rural = 0
+        let fichas_urbano_rural = 0
+        let fichas_desplazados = 0
+        let fichas_vulnerable = 0
+
+        let url = `vigTec/getAllVigTec`
+        axios.get(url)
+        .then(function(response) {
+            let jsonData = response.data
+            // console.log(jsonData)
+            if(jsonData.length != 0){
+                all_fichas = jsonData.length
+                jsonData.forEach((ficha, i) => {
+                    if(ficha.poblacion == 'Urbana'){fichas_urbano++}
+                    if(ficha.poblacion == 'Rural'){fichas_rural++}
+                    if(ficha.poblacion == 'Urbana y Rural'){fichas_urbano_rural++}
+                    if(ficha.poblacion == 'Desplazados'){fichas_desplazados++}
+                    if(ficha.poblacion == 'Victimas del conflicto' || ficha.poblacion == 'Vulnerable'){fichas_vulnerable++}
+
+                    render_fichas += `
+                        <tr id="ficha_${ficha._id}">
+                            <td class="lh-1 mb-1" style="max-width: 350px;">${ficha.title_ficha}</td>
+                            <td>${ficha.area_tema}</td>
+                            <td>${ficha.sector}</td>
+                            <td>${ficha.poblacion}</td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-dark" onclick="info('${ficha._id}')" title="Hacer administrador">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `
+                });
+            }
+            document.getElementById('fichas_list').innerHTML = render_fichas
+            document.getElementById('all_fichas').innerHTML = `${all_fichas}`
+            document.getElementById('fichas_urbano').innerHTML = `${fichas_urbano} - ${((fichas_urbano/all_fichas)*100).toFixed(2)}%`
+            document.getElementById('fichas_rural').innerHTML = `${fichas_rural} - ${((fichas_rural/all_fichas)*100).toFixed(2)}%`
+            document.getElementById('fichas_urbano_rural').innerHTML = `${fichas_urbano_rural} - ${((fichas_urbano_rural/all_fichas)*100).toFixed(2)}%`
+            // document.getElementById('fichas_desplazados').innerHTML = `${fichas_desplazados} - ${(fichas_desplazados/all_fichas)*100}%`
+            // document.getElementById('fichas_vulnerable').innerHTML = `${fichas_vulnerable} - ${(fichas_vulnerable/all_fichas)*100}%`
+
+        })
+        .catch(function(error){
+            console.log(error)
+        })
+    }
+
+    async function info(id_fucha){
+        let render_info = ''
+        let url = `/vigTec/referents/${id_fucha}`
+        await axios.get(url)
+        .then(async function(response) {
+            console.log(response)
+            let jsonData = response.data
+            let url2 = `/users/${jsonData.creator}`
+            let username = ''
+            let fullname = ''
+            let email = ''
+            
+            await axios.get(url2)
+            .then(function (response){
+                console.log(response)
+                let jsonUser = response.data
+                username = jsonUser.username
+                fullname = jsonUser.name + ' ' + jsonUser.last_name
+                email = jsonUser.email
+                
+            }).catch(function(error){
+                console.log('error consulta creador')
+                console.log(error)
+            })
+
+            let render_keywords = ''
+            if(jsonData.keywords.length != 0){
+                jsonData.keywords.forEach((item, i) => {
+                    if(i != jsonData.keywords.length-1){
+                        render_keywords += `
+                        ${item}, 
+                    ` 
+                    }else {
+                        render_keywords += `
+                        ${item}.
+                    `
+                    }
+                })
+            }
+
+            let render_colabs = ''
+            if(jsonData.colabs.length != 0){
+                jsonData.colabs.forEach((item, i) => {
+                    render_colabs += `
+                        <p class="text-muted lh-1 mt-1 mb-1">${item.user_email}</p>
+                    ` 
+                })
+            }
+
+            let art_state = jsonData.artState[0]
+            let render_problems_list = ''
+            if(art_state.problems.length != 0){
+                art_state.problems.forEach( problem => {
+                    render_problems_list += `
+                        <li>${problem.title}: ${problem.description}</li>
+                    `
+                })
+            }
+
+            render_info += `
+                <div class="text-center">
+                    <h4>${jsonData.title_ficha}</h4>
+                    <p>${fullname} - <span class="text-muted mt-1">${email}</span></p>
+                    ${render_colabs}
+                    <p class="fst-italic mt-2">${render_keywords}</p>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-4 text-center">
+                        ${jsonData.area_tema}
+                    </div>
+                    <div class="col-md-4 text-center">
+                        Sector: ${jsonData.sector}
+                    </div>
+                    <div class="col-md-4 text-center">
+                        Población: ${jsonData.poblacion}
+                    </div>
+                </div>
+
+                <h5>Estado del arte</h5>
+                    <div class="ms-2">
+                        <div class="position-relative contenedor mb-2">
+                            <p class="fw-bold mb-1">Resumen: </p>
+                            <div id="art_state_resumen">${art_state.resumen}</div>
+                        </div>
+                        <div class="position-relative contenedor mb-2">
+                            <p class="fw-bold mb-1">Observaciones: </p>
+                            <div id="art_state_observaciones">${art_state.observaciones}</div>
+                        </div>
+                        <div class="position-relative contenedor mb-2">
+                            <p class="fw-bold mb-1">Descripcion: </p>
+                            <div id="art_state_description">${art_state.description}</div>
+                        </div>
+                        <div class="position-relative contenedor mb-2">
+                            <p class="fw-bold mb-1">Conclusiones: </p>
+                            <div id="art_state_conclusiones">${art_state.description}</div>
+                        </div>
+
+                        <p class="fw-bold mb-1">Problematicas:</p> 
+                        <ol>
+                            ${render_problems_list}
+                        </ol> 
+                    </div>
+            `
+            document.getElementById('body_info').innerHTML = render_info
+            $("#modal_info").modal("show")
+        })
+        .catch(function(error){
+            console.log('error consulta ficha')
+            console.log(error)
+        })
+    }
+    window.onload = function() {
+        get_all_fichas();
+	}
+</script>

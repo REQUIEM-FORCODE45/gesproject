@@ -1,0 +1,57 @@
+
+<style>
+  a.navar,  a.navar:visited {
+    color: white !important;
+  }
+
+  a.navar:hover, a.navar:active {
+      color: rgb(196, 192, 192) !important;
+  }
+
+  a.navar.active {
+      color: rgb(255, 241, 44) !important;
+  }
+</style>
+    <!-- Navbar Start -->
+    <div class="container-fluid bg-dark sticky-top">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg bg-dark navbar-dark p-lg-0">
+            
+                <a class="navbar-brand" href="/dashboard-vig-tec" style="margin-left: 0px; margin-right: 100px;">
+                    <img src="/img/icon/cidtca.png" alt="" height="70" class="d-inline-block align-text-top">
+                  </a>
+                <button type="button" class="navbar-toggler me-0" data-bs-toggle="collapse"
+                    data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav">
+                        <a href="/dashboard-vig-tec" class="nav-item nav-link navar <% if (home) { %>
+                            active
+                        <% } %> "><i class="fas fa-home"></i>  Inicio</a>
+                        <% if (user.rol == 'admin' || user.rol == 'superadmin') { %>
+                            <div class="nav-item dropdown ms-auto">
+                                <a href="#" class="nav-link navar dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-cubes"></i> Administrador</a>
+                                <div class="dropdown-menu bg-light rounded-0 rounded-bottom m-0">
+                                    <a href="/users" class="dropdown-item">Usuarios</a>
+                                    <a href="/vigilancias" class="dropdown-item">Fichas</a>
+                                </div>
+                            </div>                         
+                        <% } %>
+                        <!-- <a href="/dashboard-vig-tec" class="nav-item nav-link navar">Vigilancia tecnológica</a> -->
+ 
+                    </div>
+
+                    <div class="nav-item dropdown ms-auto">
+                        <a href="#" class="nav-link dropdown-toggle text-white" data-bs-toggle="dropdown"><i class="fas fa-user-circle fa-lg"></i> <%= user.username %></a>
+                        <div class="dropdown-menu bg-light rounded-0 rounded-bottom m-0">
+                            <a href="/profile" class="dropdown-item">Perfil</a>
+                            <hr>
+                            <a href="/users/logout" class="dropdown-item">Cerrar sesión</a>
+                        </div>
+                    </div>
+
+                </div>
+            </nav>
+        </div>
+    </div>

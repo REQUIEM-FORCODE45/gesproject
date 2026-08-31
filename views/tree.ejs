@@ -1,0 +1,194 @@
+<input type="hidden" id="vig_tec_id" value="<%= vig_tec_id %>">
+<input type="hidden" id="posTree" value="<%= posTree %>">
+
+<!-- Template Stylesheet tree -->
+<link href="/css/tree_style.css" rel="stylesheet">
+
+<!-- BREADCRUMB -->
+<div class="col-12 d-flex flex-row-reverse">
+    <div class="mt-2 me-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="margin-bottom: 0px;">
+                <li class="breadcrumb-item"><a href="/dashboard-vig-tec">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="/vigTec/<%= vig_tec_id %>">Vigilancia tecnologica</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Arbol de problemas</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- <button type="button" class="btn btn-outline-danger" onclick="print_grafica()"><i class="fas fa-file-pdf"></i> PDF</button> -->
+
+
+<div class="container overflow-auto text-center" id="div_tree">
+    <div class="tree" id="render_efectos">
+        ...
+    </div>
+    <br>
+    <div class="one" id="render_central">
+        ...
+    </div>
+    <br>
+    <div class="two" id="render_tree">
+        ...
+    </div>
+</div>
+<hr>
+
+<!-- axios  -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js" integrity="sha256-c3RzsUWg+y2XljunEQS0LqWdQ04X1D3j22fd/8JCAKw=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<script>
+
+    let vig_tec_id = document.getElementById('vig_tec_id').value
+    let posTree = document.getElementById('posTree').value
+
+    async function get_tree(){
+        let url = `/tree/data/${vig_tec_id}/${posTree}`
+        let render_tree = ''
+        let render_causas = ''
+        let render_central = ''
+        axios.get(url)
+            .then(function(response) {
+                let jsonData = response.data.tree.problem_tree
+                console.log("jsonData")
+                console.log(jsonData)
+                jsonData.causas.forEach(directa => {
+                    let render_indi = ''
+                    directa.causas_indirectas.forEach(indi => {
+                        let render_tercer = ''
+                        if(indi.tercer_orden){
+                            indi.tercer_orden.forEach(tercer => {
+                                render_tercer += `
+                                    <li>
+                                        <a href="#">${tercer.title}</a>
+                                    </li>
+                                `
+                            })
+                        }
+                        render_indi += `
+                            <li>
+                                <a href="#">${indi.title}</a>
+                                <ul>
+                                    ${render_tercer}
+                                </ul>
+                            </li>
+                        `
+                    })
+                    render_causas += `
+                        <li>
+                            <a href="#">${directa.title}</a>
+                            <ul>
+                                ${render_indi}
+                            </ul>
+                        </li>
+                    `
+                });
+                render_tree += `
+                    <ul>
+                        <li>
+                            <!--<a href="#">${jsonData.central_problem.title}</a>-->
+                            <ul> 
+                                ${render_causas}
+                            </ul>
+                        </li>
+                    </ul>
+                `
+
+                render_central += `
+                    <ul style="list-style: none;" >
+                        <li style="
+                                border: 1px solid #ccc;
+                                padding: 0.5em 2em;
+                                text-decoration: none;
+                                display: inline-block;
+                                border-radius: 5px;
+                                color: #fff;
+                                background: #2c8ef8;
+                                position: relative;
+                                top: 1px;
+                            ">
+                            <span>${jsonData.central_problem.title}</span>
+                        </li>
+                    </ul>
+                `
+                
+                let render_efectos = ''
+                let render_data_efectos = ''
+                console.log(jsonData.efectos.length)
+                if(jsonData.efectos.length != 0){
+                    jsonData.efectos.forEach(efecto => {
+                        render_data_efectos += `
+                            <li>
+                                <a href="#">${efecto.title}</a>
+                            </li>
+                        `
+                    })
+                }
+                render_efectos += `
+                    <ul>
+                        <li>
+                            <!--<a href="#">${jsonData.central_problem.title}</a>-->
+                            <ul> 
+                                ${render_data_efectos}
+                            </ul>
+                        </li>
+                    </ul>
+                `
+
+                document.getElementById('render_efectos').innerHTML = render_efectos
+                document.getElementById('render_central').innerHTML = render_central
+                document.getElementById('render_tree').innerHTML = render_tree
+
+                let width_two = document.getElementById('render_tree').clientWidth
+                console.log(width_two)
+                document.getElementById('render_efectos').style.width = width_two + 'px'
+                document.getElementById('render_central').style.width = width_two + 'px'
+                
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
+    }
+
+    async function print_grafica(){
+        // Obteniendo la etiqueta la cual se desea convertir en imagen
+        var domElement = document.getElementById('div_tree');
+        let filename = 'hola.png'
+ 
+        // Utilizando la función html2canvas para hacer la conversión
+        html2canvas(domElement, {
+            onrendered: function(domElementCanvas) {
+                // Obteniendo el contexto del canvas ya generado
+                var context = domElementCanvas.getContext('2d');
+
+                // Creando enlace para descargar la imagen generada
+                var link = document.createElement('a');
+                link.href = domElementCanvas.toDataURL("image/png");
+                link.download = filename;
+
+                // Chequeando para browsers más viejos
+                if (document.createEvent) {
+                    var event = document.createEvent('MouseEvents');
+                    // Simulando clic para descargar
+                    event.initMouseEvent("click", true, true, window, 0,
+                        0, 0, 0, 0,
+                        false, false, false, false,
+                        0, null);
+                    link.dispatchEvent(event);
+                } else {
+                    // Simulando clic para descargar
+                    link.click();
+                }
+            }
+        });
+    }
+
+
+    window.onload = function() {
+        get_tree();
+    }
+</script>

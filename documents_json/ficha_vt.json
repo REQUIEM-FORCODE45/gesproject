@@ -1,0 +1,45 @@
+{
+    "ficha_vt": {
+        "title_ficha": "",
+        "area_tema": "?",
+        "keywords": [],
+        "sector": "Salud, Agropecuario, Agroforestal, Ingeniería, etc",
+        "poblacion": "Urbana, Rural, Urbana y Rural, Desplazados, Victimas del conflicto, Vulnerables",
+        "createAt": "",
+        "updateAt": "",
+        "referents": [
+            {
+                "doc_type": "Artículo científico, Artículo de referencia, Comentario, Libro, Capítulo de libro, Informe, Resumen, Nota editorial, Tesis, Monografía, Memorias evento, Ponencia",
+                "doc_title": "",
+                "doc_area_tema": "?",
+                "year_publication": "",
+                "authors": ["nombre y apellido ? nombre completo?"],
+                "country_publication": "",
+                "institution_entity": "optional",
+                "indexing": "optional",
+                "categorization": "optional",
+                "doc_URL": "",
+                "DOI": "optional",
+                "ISDN_ISBN": "optional",
+                "createAt": "",
+                "updateAt": ""
+            }
+        ],
+        "reports": {
+            "title_ficha": "",
+            "area_tema": "?",
+            "keywords": [],
+            "sector": "",
+            "poblacion": "",
+            "referents_length": "",
+            "docs_types": "",
+            "range_year_pub": "maximo - minimo",
+            "authors_length": "",
+            "authors_average": "promedio de autores por documento",
+            "countrys": "",
+            "indexing_docs": "NO ENTIENDO",
+            "statistics_categorization": "",
+            "temas": ""
+        }
+    }
+}

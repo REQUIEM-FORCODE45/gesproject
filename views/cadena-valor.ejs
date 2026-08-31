@@ -1,0 +1,489 @@
+<style>
+    .joinBtn:hover {
+        background-color: rgb(227, 236, 238);
+    }
+
+    .marginReferent {
+        margin-bottom: 5px;
+    }
+
+    .edid{
+        display: none;
+        width: 50px;
+    }
+
+    .contenedor:hover > .edid{
+        display:block;
+        color: aquamarine;
+
+    }
+
+</style>
+
+<input id="vig_tex_id" type="hidden" value=<%= vigTex %>>
+<input id="user_id" type="hidden" value=<%= user._id %>>
+<input id="tree_id" type="hidden" value=<%= id_tree %>>
+
+<!-- BREADCRUMB -->
+<div class="col-12 d-flex flex-row-reverse">
+    <div class="mt-2 me-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="margin-bottom: 0px;">
+                <li class="breadcrumb-item"><a href="/dashboard-vig-tec">Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Vigilancia tecnologica</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- END BREADCRUMB -->
+
+<!-- content vigilancia tecnologica (estado del arte || referentes || datos completos referentes) -->
+<div class="" style="margin: 25px;">
+            
+        <div class="col-12 col-md-12 mb-3">
+            <!-- HEAD VIGILANCIA TECNOLOGICA -->
+            <div class="mx-auto wow fadeInUp p-2 bg-dark p-4" style="border-radius: 20px;" data-wow-delay="0.1s" id="head_vig_tec">
+                
+            </div>
+            <hr style="margin-top: 0%; color: #ECF6FF;">       
+            <!-- END HEAD VIGILANCIA TECNOLOGICA -->
+
+            <div class="row mt-2 p-2">
+                <div class="col-12" id="alerts"></div>
+                <div class="table-responsive">
+                    <table class="table table-secondary table-hover">
+                        <thead>
+                            <tr>
+                                <th>Objetivo General</th>
+                                <th>Objetivos Especificos</th>
+                                <th style="width: 250px;">Actividades</th>
+                                <th>Productos</th>
+                                <th>Medio de verificacion</th>
+                                <th><i class="fas fa-cog"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_objs">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+</div>
+
+
+<!-- axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+<!-- CHart js GRAFICA -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@latest/dist/Chart.min.js"></script>
+<!-- Sweet alert -->
+<script src="/dist/sweetalert2.all.js"></script>
+
+<script>
+
+    let vig_tec_id = document.getElementById('vig_tex_id').value
+    let tree_id = document.getElementById('tree_id').value
+    let user_id = document.getElementById('user_id').value
+    let DataGlobal = []
+    let creator = false
+    let pWrite = false
+    let pUpdate = false
+    let pDelete = false
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "bottom-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
+
+    function alert_success(message) {
+
+        let alert = `
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                <img src="..." class="rounded me-2" alt="...">
+                <strong class="me-auto">Bootstrap</strong>
+                <small>11 mins ago</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                Hello, world! This is a toast message.
+                </div>
+            </div>
+        </div>
+        `;
+        document.getElementById('alerts').innerHTML = alert
+
+        // $(".alert").delay(3000).slideUp(0, function() {
+        //     $(this).alert('close');
+        // });
+
+    }
+
+    function alert_danger(message) {
+        let alert = `
+            <div class="alert alert-danger d-flex align-items-center alert-dismissible fade show" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#check-circle-fill"/></svg>
+                <div>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        document.getElementById('alerts').innerHTML += alert
+        $(".alert").delay(3000).slideUp(0, function() {
+            $(this).alert('close');
+        });
+    }
+
+    async function get_all_referents() {
+        let url = '/vigTec/referents/' + vig_tec_id;
+        await axios.get(url)
+            .then(function(response) {
+                let jsonData = response.data
+                DataGlobal = jsonData
+                // console.log(jsonData)
+                // creator = jsonData.creator
+                if(jsonData.creator == user_id){
+                    creator = true
+                    pWrite  = true
+                    pUpdate = true
+                    pDelete = true
+                }
+
+                let keywords = ''
+                jsonData.keywords.forEach((keys, i) => {
+                    if(i == jsonData.keywords.length - 1){
+                        keywords += keys    
+                    } else {
+                        keywords += keys + ', '
+                    }
+                });
+
+                let render_head_vig_tec = `
+                    <div class="row">
+                        <div class="col-md-7">
+                            <!-- title -->
+                            <h2 class="fs-4 mb-1 text-white">${jsonData.title_ficha}</h2>
+                            <p class="text-muted fs-6 fw-lighter">${jsonData.area_tema}</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <p class="text-white mb-1" style="font-size: 12px;"><b>Sector: </b>${jsonData.sector}</p>
+                            <p class="text-white" style="font-size: 12px;"><b>Poblacion: </b>${jsonData.poblacion}</p>
+                        </div>
+                        <!-- DIV OPTIONS FICHA VIGILANCIA TECNOLOGICA -->
+                        <div class="col-md-1">
+                            <div class="dropdown">
+                                <a class="btn btn-link bg-light joinBtn text-muted float-center" 
+                                    href="#" role="button" id="optionsMenuLink" data-bs-toggle="dropdown" aria-expanded="false" title="Opciones">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </a>
+                            
+                                <ul class="dropdown-menu" aria-labelledby="optionsMenuLink">
+                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_colab">Colabs <i class="fas fa-user-plus float-end mt-1"></i></a></li>
+                                    ${pUpdate? `
+                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_edit_ficha_vig_tec">Editar <i class="fas fa-edit float-end mt-1"></i></a></li>                                        
+                                    `:``}
+                                    ${creator? `
+                                    <li><a class="dropdown-item" onclick="delete_ficha()">Eliminar <i class="fas fa-trash-alt float-end mt-1"></i></a></li>                                        
+                                    `:``}
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- END DIV OPTIONS VIG TEC -->
+                    </div>
+                    <!-- keywords -->
+                    <div class="">
+                        <p class="fs-6 fw-medium text-white">${keywords}</p>
+                    </div>
+                    <div class="mt-1 mb-1 text-end">
+                        ${jsonData.tree.length != 0 ? `
+                                <a class="btn btn-light" href="/tree/${vig_tec_id}/${jsonData.tree.length}" title="Ver ultimo arbol de problemas generado"><i class="fas fa-sitemap"></i> Ver árbol de problemas</a>
+                        `:``}
+                            <button class="btn btn-warning text-dark" onclick="report_generate()" title="Generar reporte de la vigilancia tecnologica"><i class="fas fa-file-alt"></i> Generar Reporte</button>
+                    </div>
+                `
+
+                document.getElementById('head_vig_tec').innerHTML = render_head_vig_tec
+                
+                render_cadena()
+
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+    }
+
+    async function save_actividad(id){
+        let actividad = document.getElementById(`actividad_${id}`)
+        let producto = document.getElementById(`${id}`)
+        let producto_name = producto.options[producto.selectedIndex];
+        let verif = document.getElementById(`verif_${id}`)
+
+        console.log(verif)
+
+        if(actividad.value == '')
+        {
+            return Toast.fire({
+                icon: "error",
+                title: "Complete los campos"
+            });
+        } 
+        let obj = {
+            actividad: actividad.value,
+            producto: producto_name.text,
+            verif: verif.textContent,
+        }
+
+        console.log(obj)
+        // let arr_actividades = []
+        // actividades.push(obj)
+        // console.log(arr_actividades)
+        actividad.value = ''
+        producto.value = ''
+        verif.innerHTML = ''
+        // document.getElementById(`btn_${id}`).innerHTML = `<i class="fas fa-check"></i>
+
+        let tree_find = DataGlobal.tree.find(element => element._id == tree_id)
+        if(tree_find){
+            // console.log('arbol encontradpo')
+            // console.log(tree_find)
+            let objetivo = tree_find.objetivos.objs_especificos.find(obj => obj.id_problem == id)
+            if(objetivo) {
+                console.log('objetivo encontrado')
+                console.log(objetivo)
+                let actividades = []
+                if(!objetivo.actividades) {
+                    objetivo.actividades = []
+                    actividades.push(obj)
+                    objetivo.actividades = actividades
+                } else {
+                    actividades = objetivo.actividades
+                    actividades.push(obj)
+                    objetivo.actividades = actividades
+                }
+                
+            }
+
+            let url = `/cadena-valor/actividades/${vig_tec_id}/${tree_id}/${id}/update`
+            await axios.put(url, tree_find)
+            .then(function(response) {
+                console.log(response)
+                Toast.fire({
+                    icon: "success",
+                    title: response.data.message
+                });
+                render_cadena()
+            })
+            .catch(function(error){
+                console.log(error)
+                Toast.fire({
+                    icon: "error",
+                    title: error.data.message
+                });
+            })
+        }
+
+    }
+
+    function render_cadena() {
+        let tree_find = DataGlobal.tree.find(element => element._id == tree_id)
+        let cont_rows = 0
+        let render_tree = ''
+        if(tree_find){
+            console.log('arbol encontradpo')
+            console.log(tree_find)
+            let render_esp = ``
+            tree_find.objetivos.objs_especificos.forEach((obj, i) => {
+                if(obj.actividades) cont_rows += obj.actividades.length + 1
+                else cont_rows ++
+            })
+            // console.log('cont_rows')
+            // console.log(cont_rows)
+            tree_find.objetivos.objs_especificos.forEach((obj, i) => {
+                let render_actividades = ''
+                if(obj.actividades){
+                    obj.actividades.forEach((actividad, i_act) => {
+                        render_actividades += `
+                        <tr>
+                            <td><b>${i+1}.${i_act+1}.</b> ${actividad.actividad}</td>
+                            <td>${actividad.producto}</td>
+                            <td>${actividad.verif}</td>
+                            <td class="text-center">
+                                <button class="btn btn-link" title="Eliminar actividad" onclick="delete_actividad('${obj.id_problem}', '${i}')">
+                                    <i class="fas fa-times text-danger"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        `
+                    })
+                }
+                render_tree += `
+                    ${i == 0 ? `
+                        <tr>
+                            <th rowspan="${cont_rows}" class="align-middle">
+                                ${tree_find.objetivos.obj_central}
+                            </th>
+                    `:`<tr>`}
+                        <td rowspan="${obj.actividades? obj.actividades.length+1 : ''}" class="align-middle">
+                            <b>${i+1}. </b>${obj.objetivo}
+                        </td>
+                        <td style="min-width: 250px;" id="td_actividad_${obj.id_problem}">
+                            <textarea class="form-control" id="actividad_${obj.id_problem}" rows="3"></textarea>
+                        </td>
+                        <td id="td_select_${obj.id_problem}">
+                            <select class="form-select" id="${obj.id_problem}" onchange="change_producto(this)">
+                                <option value="0" selected disabled class="fst-italic fw-bold">- Productos resultados de actividades de generación de nuevo conocimiento</option>
+                                <option value="1">Artículo de investigación</option>
+                                <option value="2">Libro resultado de investigación</option>
+                                <option value="3">Capítulo en libro resultado de investigación</option>
+                                <option value="4">Producto tecnológico patentado o en proceso de solicitud de patente</option>
+                                <option value="6">Nuevas razas animales</option>
+                                <option value="7">Poblaciones mejoradas de razas pecuarias</option>
+                                <option value="8">Producto de investigación - creación en artes, arquitectura y diseño</option>
+                                <option value="0" disabled class="fst-italic fw-bold">- Productos resultados de actividades de desarrollo tecnológico e innovación</option>
+                                <option value="9">Producto tecnológico certificado o validado</option>
+                                <option value="10">Producto empresarial</option>
+                                <option value="11">Regulación, norma, reglamento o legislación</option>
+                                <option value="0" disabled class="fst-italic fw-bold">- Productos resultados de actividades de apropiación social del conocimiento</option>
+                                <option value="12">Procesos de Apropiación Social del Conocimiento</option>
+                                <option value="13">Circulación de conocimiento especializado</option>
+                                <option value="14">Divulgación Pública de la CTeI</option>
+                                <option value="0" disabled class="fst-italic fw-bold">- Productos de actividades relacionadas con la formación de recurso humano para CTeI</option>
+                                <option value="15">Estudiante de doctorado</option>
+                                <option value="16">Estudiante de maestría</option>
+                                <option value="17">Estudiante de especialidad médica</option>
+                                <option value="18">Estudiante de doctorado</option>
+                                <option value="19">Joven investigador</option>
+                                <option value="20">Estudiante de pregrado</option>
+                                <option value="21">Apoyo a la creación de programas y cursos de formación de investigadores</option>
+                                <option value="22">Estudiante de doctorado</option>
+                                <option value="23">Estudiante de pregrado</option>
+                                <option value="24">Apoyo a la creación de programas y cursos de formación de investigadores</option>
+                                <option value="25">Acompañamiento y asesoría de línea temática del Programa Ondas</option>
+                            </select>
+                        </td>
+                        <td id="td_verif_${obj.id_problem}">
+                            <span id="verif_${obj.id_problem}"><span>
+                            
+                        </td>
+                        <td>
+                            <button class="btn btn-link btn-lg" onclick="save_actividad('${obj.id_problem}')" title="Agregar actividad">
+                                <i class="fas fa-plus-circle fa-lg"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    ${render_actividades}
+                
+                `
+            })
+            
+            document.getElementById('table_objs').innerHTML = render_tree
+        }
+    }
+
+    function change_producto(producto){
+        let verif = document.getElementById(`verif_${producto.id}`)
+        if(producto.value == '0'){
+            verif.innerHTML = ""
+        } else if(producto.value == '1'){
+            verif.innerHTML = 'Copia del artículo publicado o carta de aceptación de publicación del artículo expedida por el comité de la revista.'
+        } else if(producto.value == '2'){
+            verif.innerHTML = 'Ejemplar del libro resultado de la investigación o carta de aceptación de publicación del libro expedida por el comité editorial.'
+        } else if(producto.value == '3'){
+            verif.innerHTML = 'Copia del capítulo publicado o carta de aceptación de publicación del capítulo expedida por el comité editorial.'
+        } else if(producto.value == '4'){
+            verif.innerHTML = 'Certificado o solicitud del registro de patente o modelo de utilidad.'
+        } else if(producto.value == '5'){
+            verif.innerHTML = 'Certificado o solicitud de certificación expedido por el Instituto Colombiano Agropecuario - ICA.'
+        } else if(producto.value == '6'){
+            verif.innerHTML = 'Certificado o solicitud de certificación expedido por el Instituto Colombiano Agropecuario - ICA.'
+        } else if(producto.value == '7'){
+            verif.innerHTML = 'Certificado o solicitud de certificación expedido por el Ministerio de Agricultura que emitió el registro'
+        } else if(producto.value == '8'){
+            verif.innerHTML = 'Certificación institucional de la obra con existencia de soportes de la creación en repositorio (de la institución que avala el producto), y/o certificado expedido por la entidad convocante a premios o distinciones donde la obra haya participado.'
+        } else if(producto.value == '9'){
+            verif.innerHTML = 'Certificación de registro aprobado por la institución otorgante, o copia de contratos de desarrollo para el caso de planta piloto.'
+        } else if(producto.value == '10'){
+            verif.innerHTML = 'Registro del producto o de la empresa ante la entidad competente, certificación institucional firmada por el representante legal que declare la implementación de la innovación en pequeñas, medianas y grandes empresas.'
+        } else if(producto.value == '11'){
+            verif.innerHTML = 'Certificación de la entidad competente que emite la reglamentación o normatividad, en la que se indique la participación delgrupo de investigación o de alguno desus integrantes en la construcción.'
+        } else if(producto.value == '12'){
+            verif.innerHTML = 'Certificación emitida por la Comunidad, agremiación y/u organización pública o privada que avala el proyecto\nProductos publicados en repositorio institucional con los requerimientos de existencia'
+        } else if(producto.value == '13'){
+            verif.innerHTML = 'Documentación de la estrategia, proceso o resultado alcanzado, así como certificado expedido por el representante legal de la institución especificando el tipo de producto y laparticipación del grupo en su realización.'
+        } else if(producto.value == '14'){
+            verif.innerHTML = 'Documentación de la estrategia de divulgación pública de la CTeI.\nEvidencia del material de divulgación pública de la CTeI resultado del proceso de investigación (libro, artículo, cartilla, audiovisuales, portales web, micrositios, blogs, etc.).'
+        } else if(producto.value == '15'){
+            verif.innerHTML = 'Para el caso de formación, diploma o acta de grado, y certificación emitida por la institución indicando que la tesis culminada se realizó en el marco del proyecto. Para el caso de vinculación, certificación emitida por la institución indicando que la tesis o actividades del estudiante se realizanen el marco del proyecto, así como informe de actividades realizadas.'
+        } else if(producto.value == '16'){
+            verif.innerHTML = 'Para el caso de formación, diploma o acta de grado, y certificación emitida por la institución indicando que la tesis culminada se realizó en el marco del proyecto. Para el caso de vinculación, certificación emitida por la institución indicando que la tesis o actividades del estudiante se realizan en el marco del proyecto, así como informe de actividades realizadas.'
+        } else if(producto.value == '17'){
+            verif.innerHTML = 'Para el caso de formación, diploma o acta de grado, y certificación emitida por la institución indicando que la tesis culminada se realizó en el marco del proyecto. Para el caso de vinculación, certificación emitida por la institución indicando que la tesis o actividades del estudiante se realizan en el marco del proyecto, así como informe de actividades realizadas.'
+        } else if(producto.value == '18'){
+            verif.innerHTML = 'Para el caso de formación, diploma o acta de grado, y certificación emitida por la institución indicando que la tesis culminada se realizó en el marco del proyecto. Para el caso de vinculación, certificación emitida por la institución indicando que la tesis o actividades del estudiante se realizan en el marco del proyecto, así como informe de actividades realizadas.'
+        } else if(producto.value == '19'){
+            verif.innerHTML = 'Contrato de vinculación del joven investigador e informedelas actividades desarrolladas en el marco del proyecto.'
+        } else if(producto.value == '20'){
+            verif.innerHTML = 'Para el caso de formación, diploma o acta de grado, y certificación emitida por la institución indicando la participación del estudiante en el marco del proyecto. Para el caso de vinculación, certificación emitida por la institución indicando la participación del estudiante en el marco del proyecto, así como informe de actividades realizadas.'
+        } else if(producto.value == '21'){
+            verif.innerHTML = 'Resolución expedida por la institución académica a la cual pertenece el programa. Certificación expedida por el respectivo programa académico para el caso de creación de cursos.'
+        } else if(producto.value == '22'){
+            verif.innerHTML = 'Para el caso de formación, diploma o acta de grado, y certificación emitida por la institución indicando que la tesis culminada se realizó en el marco del proyecto. Para el caso de Vinculación, certificación emitida por la institución indicando que la tesis o actividades del estudiante se realizan en el marco del proyecto, así como informe de actividades realizadas.'
+        } else if(producto.value == '23'){
+            verif.innerHTML = 'Para el caso de formación, diploma o acta de grado, y certificación emitida por la institución indicando que la tesis culminada se realizó en el marco del proyecto. Para el caso de vinculación, certificación emitida por la institución indicando que la tesis o actividades del estudiante se realizan en el marco del proyecto, así como informe de actividades realizadas.'
+        } else if(producto.value == '24'){
+            verif.innerHTML = 'Resolución expedida por la institución académica a la cual pertenece el programa. Certificación expedida por el respectivo programa académico para el caso de creación de cursos.'
+        } else if(producto.value == '25'){
+            verif.innerHTML = 'Iniciativa reconocida en la comunidad de pares del Programa Ondas; iniciativa que haya participado en las Ferias de la ciencia en los niveles municipales, departamentales, regionales, nacionales e internacionales.'
+        } else {
+            verif.innerHTML = ''
+        }
+    }
+
+    async function delete_actividad(obj, index){
+        console.log('Delete actividad')
+
+        let tree_found = DataGlobal.tree.find(element => element._id == tree_id)
+        console.log(tree_found)
+        let obj_found = tree_found.objetivos.objs_especificos.find(o => o.id_problem == obj)
+        if(!obj_found) return Toast.fire({
+                icon: "error",
+                title: "No se encontro objetivo"
+            });
+        obj_found.actividades.splice(index, 1);
+        console.log('Objetivos actualizados')
+        console.log(tree_found)
+        let url = `/cadena-valor/actividades/${vig_tec_id}/${tree_id}/${obj}/update`
+        await axios.put(url, tree_found)
+        .then(function(response) {
+            console.log(response)
+            Toast.fire({
+                icon: "success",
+                title: response.data.message
+            });
+            render_cadena()
+        })
+        .catch(function(error){
+            console.log(error)
+            Toast.fire({
+                icon: "error",
+                title: error.data.message
+            });
+        })
+    }
+
+    window.onload = function() {
+        get_all_referents();
+        console.log('wasaaa')
+	}
+</script>

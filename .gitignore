@@ -1,0 +1,15 @@
+# public imagenes personal de modelo
+public/uploads/files
+
+/.env
+
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Output of 'npm pack'
+*.tgz .rar .zip
+
+

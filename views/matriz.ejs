@@ -1,0 +1,2090 @@
+<style>
+    .joinBtn:hover {
+        background-color: rgb(227, 236, 238);
+    }
+    .lim-text { 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        display: -webkit-box; 
+        -webkit-line-clamp: 2; /* number of lines to show */ 
+        -webkit-box-orient: vertical; 
+    }
+    .lim-text-2 { 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        display: -webkit-box; 
+        -webkit-line-clamp: 1; /* number of lines to show */ 
+        -webkit-box-orient: vertical; 
+    }
+    .marginReferent {
+        margin-bottom: 0px;
+    }
+    a.fastEdit:hover {
+        background-color: rgb(15, 67, 238);
+        transition: background-color .5s;
+    }
+    .contenedor{
+        background-color: rgb(199, 199, 199);
+    }
+
+    .boton{
+        visibility: hidden; 
+    }
+
+    .contenedor:hover > .boton{
+        visibility: visible;
+    }
+
+</style>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+    </symbol>
+    <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+    </symbol>
+    <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </symbol>
+</svg>
+
+<input id="vig_tec_id" type="hidden" value=<%= vig_tec_id %>>
+<input id="art_state_id" type="hidden" value=<%= art_state_id %>>
+<input id="user_id" type="hidden" value=<%= user._id %>>
+
+<!--  # ---- MODAL ADD PROBLEMA ---- #  -->
+<div class="modal fade" id="ProblemaModal" tabindex="-1" aria-labelledby="ProblemaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ProblemaModalLabel">Problemas</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="form_post_ficha"> <!-- Form create Problema-->
+                <div class="modal-body">
+                    <div class="row g-3">
+                        
+                        <div class="col-md-9">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="title" name="title" placeholder="Titulo *" required>
+                                <label for="title">Titulo *</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="sigla" name="sigla" placeholder="Sigla">
+                                <label for="sigla">Sigla</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" id="description" name="description" placeholder="Descripción" style="height: 100px"></textarea>
+                                <label for="description">Descripción</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ligth" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" onclick="post_problem_register()" id="btn_add_problem">Añadir</button>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- # ---- END MODAL ADD Problemas ---- # -->
+
+<!-- # ---- MODAL GENERAR ARBOL DE OBJETIVOS ---- # -->
+
+<div class="modal fade" id="object_tree_modal" aria-hidden="true" aria-labelledby="object_tree_modal_label" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="object_tree_modal_label">Arbol de obejtivos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Se genera el arbol de objetivos a partir del arbol de problemas aplicando la Taxonomía de Bloom
+                <br><br>
+                <div id="problem_tree_to_obj">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ligth" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btn_save_obj" onclick="save_obj()">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <!-- # ----- END MODAL GENERAR ARBOL DE OBJETIVOS ----- # -->
+
+<!-- OFFCANVAS TABLE PROBLEMS -->
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Lista de problemas</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="table-responsive mx-auto wow fadeInUp mb-2 overflow-auto scrollbar-deep-purple bordered-deep-purple thin">
+            <table class="table table-centered table-hover table-sm mb-0">
+                <thead class="table-dark align-middle">
+                    <tr>
+                        <th class="text-center" style="max-width: 30px;">#</th>
+                        <th class="text-center" style="max-width: 30px;">Sigla</th>
+                        <th class="text-center">Titulo</th>
+                    </tr>
+                </thead>
+                <tbody id="problems_list">
+                    <!-- CONTENT PROBLEMS -->
+                    <tr>
+                        <td colspan="4">
+                            <a class="btn btn-link d-flex justify-content-center text-muted fs-6" data-bs-toggle="modal" data-bs-target="#ProblemaModal">
+                                <i class="fas fa-plus-circle mt-1"></i>&nbsp;Añadir nuevo problema
+                            </a>
+                        </td>
+                    <tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- END OFFCANVAS TABLE PROBLEMS -->
+
+<!-- BREADCRUMB -->
+<div class="col-12 d-flex flex-row-reverse">
+    <div class="mt-2 me-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="margin-bottom: 0px;">
+                <li class="breadcrumb-item"><a href="/dashboard-vig-tec">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="/vigTec/<%= vig_tec_id %>">Vigilancia tecnologica</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Matriz</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<!-- END BREADCRUMB -->
+
+<!-- DIV ALERTS -->
+<div class="col-12" id="alerts"></div>
+<!-- END DIV ALERTS -->
+
+<div class="container mt-2">
+
+    <div class="row bg-white p-4" style="border-radius: 20px;">
+        <div class="col-md-3 mb-1">
+            <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
+                <i class="fas fa-bars"></i> Problemas
+            </button>        
+        </div>
+        <div class="col-md-7 mb-1">
+            <ul class="nav nav-pills">
+                <li class="nav-item me-2">
+                    <a class="btn btn-outline-dark active" href="#mi_matriz" data-bs-toggle="tab" aria-expanded="false" class="nav-link active" title="Se muestra los valores que le dio a la matriz">
+                        <span class="font-16">Mi matriz</span>
+                    </a>
+                </li>
+                <li class="nav-item me-2">
+                    <a class="btn btn-outline-dark" href="#matriz_promedio" data-bs-toggle="tab" aria-expanded="true" class="nav-link" onclick="get_data_problems()" title="Se muestra el valor promedio que le dieron todos los colaboradores a la matriz">
+                        <span class="d-none d-md-block">Matriz resultado</span>
+                        <span class="d-block d-md-none">Resultado</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-dark" href="#matriz_grafica" data-bs-toggle="tab" aria-expanded="true" class="nav-link" onclick="graficar_matriz()" title="Grafica resultante de la matriz">
+                        <span class="font-16">Grafíca</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-2">
+            <div class="row">
+                <div class="col-6">
+                    <a href="#" onclick="reload_page()" title="Actualizar">
+                        <div class="btn-square bg-light rounded-circle" style="width: 52px; height: 52px;">
+                            <i class="fas fa-redo"></i>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 d-flex flex-row-reverse">
+                    <a href="/vigTec/<%= vig_tec_id %>" title="Regresar">
+                        <div class="btn-square bg-light rounded-circle" style="width: 52px; height: 52px;">
+                            <i class="fas fa-arrow-left"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content">
+        <div class="tab-pane show active" id="mi_matriz">
+            <hr>
+            <!-- DIV DESCRIPCION Y DATOS Problemas -->
+            <div class="bg-light overflow-auto scrollbar-deep-purple bordered-deep-purple thin" id="div_problem" style="max-height: 600px;">
+                <div class="table-responsive mx-auto wow fadeInUp mt-2">
+                    <table class="table table-centered table-hover table-sm mb-0">
+                        <thead class="table-dark align-middle">
+                            <tr id="thead_matriz">
+                                
+                            </tr>
+                        </thead>
+                        <tbody id="tbody_matriz">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <button type="button" class="btn btn-success float-end" onclick="exportTableToCSV('matriz')"><i class="fas fa-file-excel"></i> CSV</button>
+            <!-- END DIV DESCRIPCION Y DATOS PROBLEMAS -->
+            <hr>
+            <div class="mt-2">
+                <h6>La matriz de Vester de manera general funciona enfrentando las variables o
+                    causas entre sí, tomando como referencia los siguientes criterios de calificación:</h6>
+                <div class="table-responsive">
+                    <table class="table table-warning">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Indice</th>
+                                <th>Razon</th>
+                            </tr>
+                        </thead>
+                      <tbody>
+                        <tr>
+                            <td class="text-center">0</td>
+                            <td>No lo causa</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">1</td>
+                            <td>Lo causa indirectamente o tiene una relación de causalidad muy débil</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">2</td>
+                            <td>Lo causa de forma semidirecta o tiene una relación de causalidad media</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">3</td>
+                            <td>Lo causa directamente o tiene una relación de causalidad fuerte</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="matriz_promedio">
+            <hr>
+            <!-- DIV DESCRIPCION Y DATOS Problemas -->
+            <div class="bg-light overflow-auto scrollbar-deep-purple bordered-deep-purple thin" id="div_problem_promedio" style="max-height: 600px;">
+                <div class="table-responsive mx-auto wow fadeInUp mt-2">
+                    <table class="table table-centered table-hover table-sm mb-0">
+                        <thead class="table-dark align-middle">
+                            <tr id="thead_matriz_promedio">
+                                
+                            </tr>
+                        </thead>
+                        <tbody id="tbody_matriz_promedio">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="text-end">
+                <button type="button" class="btn btn-success" onclick="exportTableToCSV('promedio_matriz')"><i class="fas fa-file-excel"></i> CSV</button>
+            </div>
+            <!-- END DIV DESCRIPCION Y DATOS PROBLEMAS -->
+        </div>
+        <div class="tab-pane" id="matriz_grafica" style="min-height: 600px;">
+            <hr>
+            <div id="div_grafica">
+                <canvas id="grafica"></canvas>
+            </div>
+            <div>
+                <div class="dropdown float-end">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                      Exportar Grafica
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                      <li><a class="dropdown-item" onclick="print_grafica()"><i class="fas fa-file-pdf"></i> PDF</a></li>
+                      <li><a class="dropdown-item" onclick="image_graph()"><i class="far fa-file-image"></i> Imagen</a></li>
+                    </ul>
+                </div>
+            </div>
+            <br>
+        </div>
+    </div>
+
+    <!-- <div style="clear:both; font-size:1px;"></div> -->
+    <br>
+    <div id="problem_tree_div"></div>
+    <hr>
+    <div id="objetivos_tree_div"></div>
+    <div id="data_arbol" hidden>
+        <hr>
+        <div id="alert_errors_tree"></div>
+        <button type="button" class="btn btn-primary float-end" onclick="pre_generate_tree_problems()">Generar Arbol de problemas</button>
+        <br>
+        <div class="table-responsive mx-auto wow fadeInUp bg-white mb-2 mt-4 overflow-auto scrollbar-deep-purple bordered-deep-purple thin" style="visibility: visible; animation-name: fadeInUp;">
+            <table class="table table-centered table-hover table-sm mb-0">
+                <thead class="table-dark align-middle">
+                    <tr>
+                        <th class="text-center" style="max-width: 30px;">Index</th>
+                        <th class="text-center" style="max-width: 30px;">Sigla</th>
+                        <th class="text-center">Titulo</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="filter_problems">
+                    <!-- CONTENT FILTER PROBLEMS -->
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- axios  -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<!-- CHart js GRAFICA -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@latest/dist/Chart.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js" integrity="sha256-c3RzsUWg+y2XljunEQS0LqWdQ04X1D3j22fd/8JCAKw=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<!-- Arbol de problemas -->
+<!-- https://codepen.io/jesus_abad/pen/OaOMYV -->
+
+<!-- Script functions front -->
+<script>
+    let vig_tec_id = document.getElementById('vig_tec_id').value
+    let art_state_id = document.getElementById('art_state_id').value
+    let user_id = document.getElementById('user_id').value
+    let problem_data = []
+    let problems_array_global = []
+
+    function alert_success(message) {
+
+        let alert = `
+            <div class="alert alert-success d-flex align-items-center alert-dismissible fade show" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                <div>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        document.getElementById('alerts').innerHTML += alert
+
+        $(".alert").delay(3000).slideUp(0, function() {
+            $(this).alert('close');
+        });
+
+    }
+
+    function alert_danger(message) {
+        let alert = `
+            <div class="alert alert-danger d-flex align-items-center alert-dismissible fade show" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#check-circle-fill"/></svg>
+                <div>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        document.getElementById('alerts').innerHTML += alert
+        $(".alert").delay(3000).slideUp(0, function() {
+            $(this).alert('close');
+        });
+    }
+
+    async function get_all_problems() {
+        console.log('call data')
+        let url = '/matriz/problems/' + vig_tec_id + '/' + art_state_id;
+        axios.get(url)
+            .then(function(response) {
+                let jsonData = response.data.artState
+                console.log(response)
+                let problems_array = jsonData.problems
+                let tree = response.data.tree ?? {}
+
+                problems_array_global = jsonData.problems
+                
+                let render_problems = ''
+
+                problems_array.forEach((problem, i) => {
+                    render_problems += `
+                        <tr title="${problem.description}">
+                            <td>P${i+1}</td>
+                            <td>${problem.sigla}</td>
+                            <td><p class="lh-2 lim-text mb-1">${problem.title}</p></td>
+                        <tr>
+                        `
+                })
+
+                
+                
+                document.getElementById('problems_list').innerHTML += render_problems
+                render_matriz_user()
+                render_matriz_promedio(problems_array)
+                render_tree_problems(tree)
+                render_tree_objetivos(tree)
+               
+            }).catch(function(error){
+                console.log(error)
+            })
+        // Close axios
+    }
+
+    async function post_value_problem(problem, id_fila) {
+        console.log('---- post change value id problem ----')
+
+        // Variables del POST
+        let id_problem = id_fila
+        let id_problem_col = problem.id
+        let value = problem.value
+        
+        // variables de resultado 
+        let result_col = document.getElementById('fila_result_' + id_fila)
+        let result = 0
+
+        // fila valor de problemas
+        let fila_problem = document.getElementById('fila_problem_' + id_fila)
+
+        // captura de valor de cada input
+        let values_input = fila_problem.getElementsByTagName('input')
+        // console.log(values.length)
+
+        let url_api = '/matriz/value/' + vig_tec_id + '/' + art_state_id
+            axios.post(url_api, {
+                id_problem,
+                id_problem_col,
+                value,
+            })
+            .then(function(response) {
+                console.log(response)
+                let message = response.data.message
+                if(response.status == 200){
+                    for (let index = 0; index < values_input.length; index++) {
+                        const value_problem = values_input[index].value;
+                        const id_problema = values_input[index].id;
+                        result += parseInt(value_problem)
+                    }
+
+                    result_col.innerHTML = result
+
+                } else {
+                    alert_danger(message)
+                }
+                
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+
+    }
+
+    // --- # FUNCTION PROBLEMS -ART STATE # ---- //
+    async function post_problem_register() {
+        console.log('REGISTRO DE PROBLEMAS')
+        console.log(art_state_id)
+        
+        let title = document.getElementById('title').value
+        let sigla = document.getElementById('sigla').value
+        let description = document.getElementById('description').value
+        let render_problems = ''
+
+        if(title !='' && sigla != '' && description != ''){
+
+            let url_api = '/problem/register/' + vig_tec_id + '/' + art_state_id
+            axios.post(url_api, {
+                title,
+                sigla,
+                description,
+            })
+            .then(function(response) {
+                console.log(response)
+                let res = response.data
+                let message = res.message
+                if(response.status == 200){
+                    document.getElementById('title').value = ''
+                    document.getElementById('sigla').value = ''
+                    document.getElementById('description').value = ''
+
+                    render_problems += `
+                        <tr title="${res.problema.description}">
+                            <td>P${res.length_problemas}</td>
+                            <td>${res.problema.sigla}</td>
+                            <td><p class="lh-2 lim-text mb-1">${res.problema.title}</p></td>
+                        <tr>
+                        `
+                    problems_array_global.push(res.problema)
+                    document.getElementById('problems_list').innerHTML += render_problems
+                    alert_success(message);
+                    // update_list_problems();
+                    render_matriz_user();
+                    $("#ProblemaModal").modal("hide")
+                } else {
+                    alert_danger(message)
+                }
+                
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+        } else {
+            console.log('NO PASA')
+        }
+        
+    }   
+
+    // --- # END FUNCTION PROBLEMS -ART STATE # ---- //
+
+// --- # ------ GET DATA PROBLEMAS ----- # --- //
+    async function get_data_problems(){
+        console.log('get data problems')
+        let url = '/matriz/problems/' + vig_tec_id + '/' + art_state_id;
+        axios.get(url)
+            .then( function (response) { 
+                let jsonData = response.data.artState
+                console.log(jsonData)
+                let problems_array = jsonData.problems
+                render_matriz_promedio(problems_array)
+            })
+            .catch( function (error) {
+                console.log(error)
+            })
+    }
+// --- # ---- END GET DATA PROBLEMAS --- # --- //
+
+// --- # ------ PROCESS MATRIZ USUARIO ----- # --- //
+    async function render_matriz_user(){
+
+        let render_thead = `
+            <th class="text-center">#</th>
+            <th class="text-center">Sigla</th>
+        `
+        let render_tbody = ''
+        let problems_array = problems_array_global
+        problems_array.forEach((problem, i) => {
+            
+            render_thead += `
+                <th class="text-center" style="min-width: 100px;" title="${problem.title}">
+                    P${i+1}-${problem.sigla}
+                </th>
+            `
+            let casillas = ''
+            let result_col = 0
+            let reg_user = problem.reg_users.find(user => user.user_id == user_id)
+            // if(reg_user){
+                
+            for (let index = 0; index < problems_array.length; index++) {
+                let valueExist
+                
+                if(reg_user){
+                    valueExist = reg_user.values.find(problema => problema.id_problem_col == problems_array[index]._id)
+                }
+                if(index == i){
+                    casillas += `
+                    <td>
+                        <input type="number" class="form-control bg-danger text-center" value="0" disabled>
+                    </td>`
+                } else {
+                    if(reg_user){
+                        let value_problem = 0
+                        if(valueExist){
+                            value_problem = parseInt(valueExist.value)
+                            result_col += value_problem 
+                        }
+                        casillas += `
+                        <td>
+                            <input type="number" class="form-control text-center" id="${problems_array[index]._id}" name="" value="${value_problem}" min="0" max="3" onchange="post_value_problem(this, '${problem._id}')"
+                            title="Qué tanto influye P${i+1}-${problem.title}, SOBRE P${index+1}-${problems_array[index].title}">
+                        </td>`
+                    } else {
+                        casillas += `
+                        <td>
+                            <input type="number" class="form-control text-center" id="${problems_array[index]._id}" name="" value="0" min="0" max="3" onchange="post_value_problem(this, '${problem._id}')"
+                            title="Qué tanto influye P${i+1}-${problem.title}, SOBRE P${index+1}-${problems_array[index].title}">
+                        </td>`
+                    }
+                    
+                }
+            }
+
+            render_tbody += `
+                <tr id="fila_problem_${problem._id}">
+                    <th class="text-center">P${i+1}</th>
+                    <td title="${problem.title}"><p class="lh-2 lim-text mb-1">${problem.sigla}</p></td>
+                    ${casillas}
+                    <td class="text-end" id="fila_result_${problem._id}">${result_col}</td>
+                </tr>
+            `
+        })
+
+        // obtener la sumatoria de las columnas
+        let render_result_col = ''
+        let result_fila_dependencia = 0
+        for (let index = 0; index < problems_array.length; index++) {
+            let result_fila = 0
+            for (let j = 0; j < problems_array.length; j++) {
+                let user_problem_find = problems_array[j].reg_users.find(user => user.user_id == user_id)
+                if(user_problem_find){
+                    let value_problem_find = user_problem_find.values.find(value => value.id_problem_col == problems_array[index]._id)
+                    if(value_problem_find){
+                        result_fila += parseInt(value_problem_find.value)
+                    }
+                }
+            }
+
+            result_fila_dependencia += result_fila
+            render_result_col += `
+                <td class="text-center">${result_fila}</td>
+            `
+        }
+        
+        render_thead += `<th class="text-center">Influencia</th>`
+        render_tbody += `
+            <tr>
+                <th class="text-center" colspan="2">Dependencia</th>
+                ${render_result_col}
+                <td class="text-end">${result_fila_dependencia/problems_array.length}</td>
+            </tr>
+        `
+        document.getElementById('thead_matriz').innerHTML = render_thead
+        document.getElementById('tbody_matriz').innerHTML = render_tbody
+    }
+
+// --- # ------ PROCESS MATRIZ USUARIO ----- # --- //
+
+// --- # ------ PROCESS MATRIZ PROMEDIO ----- # --- // 
+    async function render_matriz_promedio(problems_array){
+        // sacar la tabla promedio
+        console.log('problems_array')
+        console.log(problems_array.length)
+        let render_tbody_promedio = ''
+        let casillas_promedio = ''
+        let result_col_promedio = ''
+        let result_suma = 0
+        let cont = 0
+        problem_data = []
+
+        let render_thead = `
+            <th class="text-center">#</th>
+            <th class="text-center">Sigla</th>
+        `
+
+        for (let index = 0; index < problems_array.length; index++) {
+            let result_fila = 0
+            let result_col = 0
+            casillas_promedio = ''
+            render_tbody_promedio += `
+                <tr id="fila_promedio_${problems_array[index]._id}">
+                    <th class="text-center">P${index+1}</th>
+                    <td title="${problems_array[index].title}:\n${problems_array[index].description}">
+                        <p class="lh-2 lim-text mb-1">${problems_array[index].sigla}</p>
+                    </td>
+            `
+            for (let j = 0; j < problems_array.length; j++) {
+                let casilla_result = 0
+                let casilla_title_users = ''
+                let col_casilla_result = 0
+                for (let k = 0; k < problems_array[index].reg_users.length; k++) {
+                    let reg_users = problems_array[index].reg_users[k]    
+                    let value_problem_find = reg_users.values.find(value => value.id_problem_col == problems_array[j]._id) 
+                    if(value_problem_find){
+                        casilla_result += parseInt(value_problem_find.value)/problems_array[index].reg_users.length
+                        casilla_title_users += reg_users.user_name + ': ' + value_problem_find.value + '\n'
+                    }
+                }
+                result_fila += casilla_result
+
+                for (let k = 0; k < problems_array[j].reg_users.length; k++) {
+                    let reg_users = problems_array[j].reg_users[k]    
+                    let value_problem_find = reg_users.values.find(value => value.id_problem_col == problems_array[index]._id) 
+                    if(value_problem_find){
+                        col_casilla_result += parseInt(value_problem_find.value)/problems_array[j].reg_users.length
+                    }
+                }
+                result_col += col_casilla_result
+                // console.log('index= ' + j + ' - contador= ' + cont)
+                if(j == cont){
+                    casillas_promedio += `
+                        <td>
+                            <input type="number" class="form-control text-center bg-danger" value="0" min="0" max="3" disabled>
+                        </td>
+                        `
+                } else {
+                    if(casilla_result != 0){
+                        casillas_promedio += `
+                            <td>
+                                <input type="number" class="form-control text-center" id="${problems_array[index]._id}" name="" value="${casilla_result.toFixed(2)}" min="0" max="3" disabled
+                                title="Como influye P${index+1}-${problems_array[index].title}, sobre P${j+1}-${problems_array[j].title}\n${casilla_title_users}">
+                            </td>
+                            `
+                    } else {
+                        casillas_promedio += `
+                            <td>
+                                <input type="number" class="form-control text-center" id="${problems_array[j]._id}" name="" value="0" min="0" max="3" disabled
+                                title="Como influye P${j+1}-${problems_array[j].title}, sobre P${index+1}-${problems_array[index].title}">
+                            </td>
+                            `
+                    }
+                }
+            }
+            cont++
+            render_thead += `
+                <th class="text-center" style="min-width: 100px;" title="${problems_array[index].title}">
+                    P${index+1}-${problems_array[index].sigla}
+                </th>
+            `
+            let data_result_problem = {
+                'title': problems_array[index].title,
+                'description': problems_array[index].description,
+                'sigla': problems_array[index].sigla,
+                'index': 'P' + (index+1),
+                'result_fila': result_fila,
+                'result_col': result_col
+            }    
+            problem_data.push(data_result_problem)
+
+            result_suma += result_col
+
+            render_tbody_promedio += `
+                    ${casillas_promedio}
+                    <td class="text-center">${result_fila.toFixed(2)}</td>
+                </tr>
+            `
+            result_col_promedio += `
+                <td class="text-center">${result_col.toFixed(2)}</td>
+            `
+        }
+        render_thead += `
+            <th>    
+                Influencia
+            </th>
+            
+        `
+
+        render_tbody_promedio += `
+            <th class="text-center" colspan="2">Dependencia</th>
+            ${result_col_promedio}
+            <td class="text-end">${(result_suma.toFixed(2))/problems_array.length}</td>
+        `
+        document.getElementById('thead_matriz_promedio').innerHTML = render_thead
+        document.getElementById('tbody_matriz_promedio').innerHTML = render_tbody_promedio
+    }
+
+// --- # ---- END PROCESS MATRIZ PROMEDIO --- # --- // 
+
+    function render_tree_problems(obj){
+        if(obj){
+            console.log('render tree problem')
+            console.log(obj)
+            
+            let tree = obj.problem_tree
+            let pc_colspan = 0
+            let causas = ''
+            let causas_obj = ''
+            let causas_indirectas = ''
+            console.log('----------tree--------------')
+            console.log(obj._id)
+            tree.causas.forEach((causa, i) => {
+  
+                pc_colspan ++
+
+                if (causa.causas_indirectas.length != 0){
+                    pc_colspan += causa.causas_indirectas.length
+                    causa.causas_indirectas.forEach(indi => {
+                        causas_indirectas += `
+                            <td><b>${indi.title}:</b> ${indi.description}</td>
+                        `
+                    })
+                }
+
+                causas += `
+                    <td colspan=${causa.causas_indirectas.length}>${i+1}. <b>${causa.title}:</b> ${causa.description}</td>
+                `
+                causas_obj += `
+                    <td colspan=${causa.causas_indirectas.length}>
+                        <b>${causa.title}:</b> ${causa.description}
+                        <hr>
+                        <div class="row">
+                            <div class="col-12 text-start">
+                                <label for="${causa.index}" class="form-label">Procesos cognitivos: <span class="fw-bold" id="response_${causa.index}">Uso y dominio de la memoria a largo plazo<span></label>
+                                <select class="form-select" id="${causa.index}" onchange="response_select_1(this)">
+                                    <option value="0" disabled>Procesos cognitivos de orden inferior</option>
+                                    <option value="1">RECORDAR</option>
+                                    <option value="2">COMPRENDER</option>
+                                    <option value="3">APLICAR</option>
+                                    <option value="0" disabled>Procesos cognitivos de orden superior</option>
+                                    <option value="4">ANALIZAR</option>
+                                    <option value="5">EVALUAR</option>
+                                    <option value="6">CREAR</option>
+                                </select>
+                            </div>
+                            <div class="col-6 text-start">
+                                <label for="${causa.index}_2" class="form-label">Verbos: <span id="response_${causa.index}_2"></span></label>
+                                <select class="form-select" id="${causa.index}_2" multiple onchange="response_select_2(this)">
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label for="${causa.index}_3" class="form-label">Actividades:</label>
+                                <select class="form-select" id="${causa.index}_3">
+                                </select>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="${causa.index}_obj" class="form-label">Genere objetivo especifico:</label>
+                                <textarea class="form-control" id="${causa.index}_obj" name="obj_especifico" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </td>
+                `
+            })
+
+            let efectos = ''
+            tree.efectos.forEach(efecto => {
+                efectos += `<td><b>${efecto.title}:</b> ${efecto.description}</td>`
+            })
+
+            // console.log(causas)
+
+            // document.getElementById('problem_tree_div').hidden = false
+            document.getElementById('problem_tree_div').innerHTML = `
+            <h4 class="text-center">Arbol de problemas generado</h4>
+            <input type="hidden" id="tree_id" value="${obj._id}">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <tbody>
+                        <tr class="table-success">
+                            <td style="max-width: 100px;">Efectos</td>
+                            ${efectos}
+                        </tr>
+                        <tr class="table-danger">
+                            <td style="max-width: 100px;">Problema central</td>
+                            <td class="text-center" colspan=${pc_colspan}><b>${tree.central_problem.title}:</b> ${tree.central_problem.description}</td>
+                        </tr>
+                        <tr class="table-primary">
+                            <td style="max-width: 100px;">Causas</td>
+                            ${causas}
+                        </tr>
+                        ${causas_indirectas != '' ? `
+                        <tr class="table-info">
+                            <td style="max-width: 100px;">Causas indirectas</td>
+                            ${causas_indirectas}
+                        </tr>
+                        `: ''}
+                    </tbody>    
+                </table>
+            </div>
+            <button class="btn btn-dark" data-bs-toggle="modal" href="#object_tree_modal" role="button">Generar árbol de Objetivos</button>
+            `
+
+            document.getElementById('problem_tree_to_obj').innerHTML = `
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <tbody>
+                            <tr class="table-success">
+                                <td style="max-width: 100px;">Efectos</td>
+                                ${efectos}
+                            </tr>
+                            <tr class="table-danger">
+                                <td style="max-width: 100px;">Problema central</td>
+                                <td class="text-center" colspan=${pc_colspan}>
+                                    <b>${tree.central_problem.title}:</b> ${tree.central_problem.description}
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-12 text-start">
+                                            <label for="pc_select" class="form-label">Procesos cognitivos: <span class="fw-bold" id="response_pc_select">Uso y dominio de la memoria a largo plazo<span></label>
+                                            <select class="form-select" id="pc_select" onchange="response_select_1(this)">
+                                                <option value="0" disabled>Procesos cognitivos de orden inferior</option>
+                                                <option value="1">RECORDAR</option>
+                                                <option value="2">COMPRENDER</option>
+                                                <option value="3">APLICAR</option>
+                                                <option value="0" disabled>Procesos cognitivos de orden superior</option>
+                                                <option value="4">ANALIZAR</option>
+                                                <option value="5">EVALUAR</option>
+                                                <option value="6">CREAR</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-6 text-start mt-2">
+                                            <label for="pc_select_2" class="form-label">Verbos: <span id="response_pc_select_2"></span></label>
+                                            <select class="form-select" id="pc_select_2" multiple onchange="response_select_2(this)">
+                                            </select>
+                                        </div>
+                                        <div class="col-6 mt-2">
+                                            <label for="pc_select_3" class="form-label">Actividades:</label>
+                                            <select class="form-select" id="pc_select_3">
+                                            </select>
+                                        </div>
+                                        <div class="col-12 mt-3">
+                                            <label for="objetivo_general" class="form-label">Genere objetivo general:</label>
+                                            <textarea class="form-control" id="objetivo_general" rows="3" placeholder="Objetivo General"></textarea>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="table-primary">
+                                <td style="max-width: 100px;">Causas</td>
+                                ${causas_obj}
+                            </tr>
+                            ${causas_indirectas != '' ? `
+                            <tr class="table-info">
+                                <td style="max-width: 30px;">Causas indirectas</td>
+                                ${causas_indirectas}
+                            </tr>
+                            `: ''}
+                        </tbody>    
+                    </table>
+                </div>
+            `
+        }
+    }
+
+    function render_tree_objetivos(tree){
+        let obj = tree.objetivos
+        if(obj){
+            console.log('render tree objetivos')
+            console.log(obj)
+            
+            let pc_colspan = 0
+            let obj_esp = ''
+            console.log('----------objetivos--------------')
+
+            obj.objs_especificos.forEach((esp, i) => {
+                obj_esp += `
+                    <td>${esp.objetivo}</td>
+                `
+            })
+
+            let render = `
+            <h4 class="text-center">Arbol de objetivos generado</h4>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <tbody>
+                        <tr class="table-danger">
+                            <td style="max-width: 100px;">Objetivo central</td>
+                            <td class="text-center" colspan=${obj.objs_especificos.length}>${obj.obj_central}</td>
+                        </tr>
+                        <tr class="table-primary">
+                            <td style="max-width: 100px;">Objetivos Especificos</td>
+                            ${obj_esp}
+                        </tr>
+                    </tbody>    
+                </table>
+            </div>
+            <a class="btn btn-primary" href="/cadena-valor/${vig_tec_id}/${tree._id}">Cadena de valor</a>
+            `
+
+            document.getElementById('objetivos_tree_div').innerHTML = render
+        }
+    }
+
+    function response_select_1(select){
+        let response = ''
+        let verbos = 'no carga'
+        let actividades = ''
+        if(select.value == 1){
+            response = "Uso y dominio de la memoria a largo plazo"
+            verbos = `
+                <option>Activar</option>
+                <option>Anunciar</option>
+                <option>Bosquejar</option>
+                <option>Buscar</option>
+                <option>Citar</option>
+                <option>Contar</option>
+                <option>Decir</option>
+                <option>Definir</option>
+                <option>Describir</option>
+                <option>Enunciar</option>
+                <option>Explicar</option>
+                <option>Expresar</option>
+                <option>Identificar</option>
+                <option>Indicar</option>
+                <option>Listar</option>
+                <option>Localizar</option>
+                <option>Memorizar</option>
+                <option>Mostrar</option>
+                <option>Nombrar</option>
+                <option>Recitar</option>
+                <option>Reconocer</option>
+                <option>Recordar</option>
+                <option>Relatar</option>
+                <option>Recuperar</option>
+                <option>Repetir</option>
+            `
+            actividades = `
+                <option>Cuaderno</option>
+                <option>Definición</option>
+                <option>Experiencia</option>
+                <option>Testimonio</option>
+                <option>Uso del diccionario</option>
+            `
+        } else if (select.value == 2){
+            response ="Comprensión de las ideas y de los conceptos"	
+            verbos = `
+                <option>Clasificar</option>
+                <option>Comparar</option>
+                <option>Conectar</option>
+                <option>Contrastar</option>
+                <option>Convertir</option>
+                <option>Demostrar</option>
+                <option>Ejemplificar</option>
+                <option>Explicar</option>
+                <option>Expresar</option>
+                <option>Generalizar</option>
+                <option>Identificar</option>
+                <option>Informar</option>
+                <option>Inferir</option>
+                <option>Interpretar</option>
+                <option>Ordenar</option>
+                <option>Parafrasear</option>
+                <option>Predecir</option>
+                <option>Preguntar</option>
+                <option>Relacionar</option>
+                <option>Resumir</option>
+                <option>Traducir</option>
+            `
+            actividades = `
+                <option value="1">Analogía</option>
+                <option value="2">Conclusión</option>
+                <option value="3">Listado</option>
+                <option value="4">Resumen</option>
+            `
+        } else if (select.value == 3){
+            response = "Poner en práctica los procedimientos aprendidos para resolver problemas en contextos nuevos"
+            verbos = `
+                <option>Actuar</option>
+                <option>Calcular</option>
+                <option>Cambiar</option>
+                <option>Conectar</option>
+                <option>Construir</option>
+                <option>Demostrar</option>
+                <option>Desarrollar</option>
+                <option>Dramatizar</option>
+                <option>Ejecutar</option>
+                <option>Emplear</option>
+                <option>Enseñar</option>
+                <option>Entrevistar</option>
+                <option>Escoger</option>
+                <option>Extrapolar</option>
+                <option>Interpretar</option>
+                <option>Jugar</option>
+                <option>Manipular</option>
+                <option>Modificar</option>
+                <option>Organizar</option>
+                <option>Planear</option>
+                <option>Practicar</option>
+                <option>Resolver</option>
+                <option>Responder</option>
+                <option>Seleccionar</option>
+                <option>Simular</option>
+                <option>Solucionar</option>
+                <option>Utilizar/hacer uso</option>
+            `
+            actividades = `
+                <option value="1">Acertijos</option>
+                <option value="1">Diario</option>
+                <option value="1">Entrevista</option>
+                <option value="1">Experimento</option>
+                <option value="1">Presentación</option>
+                <option value="1">Proyecto</option>
+                <option value="1">Simulación</option>
+            `
+        } else if (select.value == 4){
+            response = "Capacidad de fragmentar la información, descomponerla y relacionarla"	
+            verbos = `
+                <option>Agrupar</option>
+                <option>Analizar</option>
+                <option>Asumir</option>
+                <option>Calcular</option>
+                <option>Categorizar</option>
+                <option>Clasificar</option>
+                <option>Concluir</option>
+                <option>Conectar</option>
+                <option>Descomponer</option>
+                <option>Discriminar</option>
+                <option>Encontrar</option>
+                <option>Enlazar</option>
+                <option>Ensamblar</option>
+                <option>Esquematizar</option>
+                <option>Establecer</option>
+                <option>Examinar</option>
+                <option>Fragmentar</option>
+                <option>Ilustrar</option>
+                <option>Identificar</option>
+                <option>Investigar</option>
+                <option>Observar</option>
+                <option>Organizar</option>
+                <option>Preguntar</option>
+                <option>Priorizar</option>
+                <option>Relacionar</option>
+                <option>Resumir</option>
+                <option>Segmentar</option>
+                <option>Unir</option>
+                <option>Validar</option>
+            `
+            actividades = `
+                <option value="1">Cuaderno</option>
+                <option value="1">Base de datos</option>
+                <option value="1">Encuesta</option>
+                <option value="1">Esquema</option>
+                <option value="1">Gráfico</option>
+                <option value="1">Mapa mental</option>
+            `
+        } else if (select.value == 5){
+            response = "Emitir juicios de valor, justificar y defender opiniones"
+            verbos = `
+                <option>Apoyar</option>
+                <option>Argumentar</option>
+                <option>Criticar</option>
+                <option>Colaborar</option>
+                <option>Comentar</option>
+                <option>Comparar</option>
+                <option>Contrastar</option>
+                <option>Considerar</option>
+                <option>Convencer</option>
+                <option>Debatir</option>
+                <option>Decidir</option>
+                <option>Deducir</option>
+                <option>Defender</option>
+                <option>Dirigir</option>
+                <option>Discutir</option>
+                <option>Establecer</option>
+                <option>Estimar</option>
+                <option>Evaluar</option>
+                <option>Hablar</option>
+                <option>Influir</option>
+                <option>Informar</option>
+                <option>Justificar</option>
+                <option>Juzgar</option>
+                <option>Medir</option>
+                <option>Opinar</option>
+                <option>Participar</option>
+                <option>Persuadir</option>
+                <option>Ponderar</option>
+                <option>Premiar</option>
+                <option>Probar</option>
+                <option>Recomendar</option>
+                <option>Relacionar</option>
+                <option>Refutar</option>
+                <option>Valorar</option>
+            `
+            actividades = `
+                <option value="1">Blog</option>
+                <option value="1">Gráfica</option>
+                <option value="1">Hoja de cálculo</option>
+                <option value="1">Informe</option>
+                <option value="1">Reseña</option>
+                <option value="1">Test</option>
+            `
+        } else if (select.value == 6){
+            response = "Utilizar lo aprendido y las habilidades adquiridas para construir ideas nuevas"
+            verbos = `
+                <option>Adpatar
+                <option>Añadir</options>
+                <option>Apreciar</options>
+                <option>Aprobar</options>
+                <option>Cambiar</options>
+                <option>Componer</options>
+                <option>Construir</options>
+                <option>Desarrollar</options>
+                <option>Descubrir</options>
+                <option>Dirigir</options>
+                <option>Diseñar</options>
+                <option>Elaborar</options>
+                <option>Experimentar</options>
+                <option>Extender</options>
+                <option>Fabricar</options>
+                <option>Filmar</options>
+                <option>Formular</options>
+                <option>Innovar</options>
+                <option>Inventar</options>
+                <option>Implementar</options>
+                <option>Liderar</options>
+                <option>Mejorar</options>
+                <option>Modificar</options>
+                <option>Optimizar</options>
+                <option>Organizar</options>
+                <option>Originar</options>
+                <option>Probar</options>
+                <option>Producir</options>
+                <option>Proponer</options>
+                <option>Publicar</options>
+                <option>Puntuar</options>
+                <option>Reportar</options>
+                <option>Reunir</options>
+                <option>Sustituir</options>
+                <option>Transmitir</options>
+                <option>Visualizar</options>
+
+            `
+            actividades = `
+                <option value="1">Cuaderno</option>
+                <option value="1">Anuncio</options>
+                <option value="1">Canción</options>
+                <option value="1">Dibujo</options>
+                <option value="1">Historia</options>
+                <option value="1">Juego</options>
+                <option value="1">Película</options>
+                <option value="1">Pódcast</options>
+                <option value="1">Video</options>
+            `
+        } else {
+            response = 'Na'
+        }
+
+
+        document.getElementById(`response_${select.id}`).innerHTML = response
+        document.getElementById(`${select.id}_2`).innerHTML = verbos
+        document.getElementById(`${select.id}_3`).innerHTML = actividades
+    }
+
+    function response_select_2(select){
+        let selectedValues = [];
+        let render = ''
+
+        for (var i = 0; i < select.options.length; i++) {
+            if (select.options[i].selected) {
+                selectedValues.push(select.options[i].value);
+            }
+        }
+
+        selectedValues.forEach((v, i) => {
+            if(i == selectedValues.length-1){
+                render += `${v}`
+            } else {
+                render += `${v}, `
+            }
+        })
+
+        console.log(render)
+        document.getElementById(`response_${select.id}`).innerHTML = render
+    }
+
+// --- # -------- GRAFICA --------- # //
+
+// -- PROBLEMAS FILTRADOS -- //
+let central_problem = {}
+let causas_directas = []
+let causas_indirectas = []
+let causas_tercer_orden = []
+let efectos = []
+let no_efecto = []
+
+
+// --- # ------- FILTRO PROBLEMAS ------ # --- //
+
+    function graficar_matriz(){
+        document.getElementById('data_arbol').hidden = false
+        console.log('problem_data')
+        console.log(problem_data)
+    // -----------------------FILTRO DE PROBLEMAS---------------------------------------------------------
+        let sumatoria = 0
+        central_problem = {}
+        central_problem.result_col = 0
+        central_problem.result_fila = 0
+        let index_del
+        problem_data.forEach(data => {
+            if(central_problem.result_fila <= data.result_fila){
+                if(central_problem.result_col <= data.result_col){
+                    central_problem.result_col = data.result_col
+                    central_problem.result_fila = data.result_fila
+                    central_problem.title = data.title
+                    central_problem.description = data.description
+                    central_problem.sigla = data.sigla
+                    central_problem.index = data.index
+                }
+            }
+            sumatoria += data.result_fila
+        })
+
+        sumatoria = sumatoria / problem_data.length
+
+        // console.log('TODOS LOS PROBLEMAS')
+        // console.log(problem_data)
+        // console.log('END TODOS LOS PROBLEMAS')
+        // console.log('PROBLEMA CENTRAL')
+        // console.log(central_problem)
+        // console.log('END PROBLEMA CENTRAL')
+        
+        // 1. PROBLEMAS DESCARTADOS, LOS QUE SE ENCUENTRAN EN LA ZONA DE AUTONOMIA, APLICAMOS FILTRO
+    
+        let filtro_col_zona_autonomia = problem_data.filter((item) => item.result_col < sumatoria)
+        let problemas_zona_autonomia = filtro_col_zona_autonomia.filter((item) => item.result_fila < sumatoria)
+        no_efecto = problemas_zona_autonomia
+        // console.log('1. PROBLEMAS DESCARTADOS')
+        // console.log(problemas_zona_autonomia)
+        // console.log('END PROBLEMAS DESCARTADOS \n')
+
+            // 2. FILTRO EFECTOS - PROBLEMAS QUE SE ENCUENTRAN EN LA ZONA DE SALIDA
+        
+        let filtro_col_zona_salida = problem_data.filter((item) => item.result_col > sumatoria)
+        let problemas_zona_salida = filtro_col_zona_salida.filter((item) => item.result_fila < sumatoria)
+        efectos = problemas_zona_salida
+        // console.log('2. FILTRO EFECTOS')
+        // // console.log(filtro_col_zona_salida)
+        // console.log(problemas_zona_salida)
+        // console.log('END FILTRO EFECTOS')
+
+            // 3. FILTRO CAUSAS - PROBLEMAS QUE SE ENCUENTRAN EN LAS ZONAS DE PODER Y DE CONFLICTO
+
+        let diferencial = ((2 * central_problem.result_col) + central_problem.result_fila)
+        let porcentaje_primer_orden = 0.7
+        let porcentaje_segundo_orden = 0.6
+        let porcentaje_tercer_orden = 0.3
+        // console.log('3. FILTRO CAUSAS')
+        // console.log('   K: diferencial = ' + diferencial )
+        let filtro_influencia = problem_data.filter((item) => item.result_fila >= sumatoria)
+        // console.log('   FILTRO CAUSAS')
+        // console.log(filtro_influencia)
+
+                // 3.1. CAUSAS DE PRIMER ORDEN - CAUSAS DIRECTAS
+
+        causas_directas = filtro_influencia.filter((item) => ((2 * item.result_col) + item.result_fila) >= (diferencial*porcentaje_primer_orden))
+        console.log('   3.1. CAUSAS DE PRIMER ORDEN')
+        causas_directas = causas_directas.filter((item) => item.index != central_problem.index)
+        console.log(causas_directas)
+
+
+                // 3.2. CAUSAS DE SEGUNDO ORDEN - CAUSAS INDIRECTAS
+
+        causas_indirectas = filtro_influencia.filter((item) => ((2 * item.result_col) + item.result_fila) <= (diferencial*porcentaje_primer_orden) && ((2 * item.result_col) + item.result_fila) >= (diferencial*porcentaje_segundo_orden))
+        // console.log('   3.2. CAUSAS DE SEGUNDO ORDEN')
+        // console.log(causas_indirectas)
+
+                // 3.3. CAUSAS DE TERCER ORDEN - 
+        causas_tercer_orden = filtro_influencia.filter((item) => ((2 * item.result_col) + item.result_fila) <= (diferencial*porcentaje_segundo_orden) && ((2 * item.result_col) + item.result_fila) >= (diferencial*porcentaje_tercer_orden))
+        // console.log('   3.3. CAUSAS DE TERCER ORDEN')
+        // console.log(causas_tercer_orden)
+
+        // -----------------------END FILTRO DE PROBLEMAS-----------------------------------------------------
+        
+        // ------------------------------------- RENDER TABLA ---------------------------------------------
+        let render_tabla = `
+            <tr class="table-danger">
+                <td class="text-center" colspan="4"> PROBLEMA CENTRAL </td>
+            </tr>
+            <tr title="${central_problem.description}">
+                <td>${central_problem.index}</td>
+                <td>${central_problem.sigla}</td>
+                <td>${central_problem.title}</td>
+                <td class="text-center">
+                </td>
+            </tr>
+            <tr class="table-primary">
+                <td class="text-center" colspan="4"> CAUSAS DIRECTAS </td>
+            </tr>
+        `
+        let render_options_causas_directas = ''
+        if(causas_directas.length != 0){
+            causas_directas.forEach(item => {
+                if(item.index != central_problem.index){
+                    render_options_causas_directas += `<option value="${item.index}">${item.index} - ${item.sigla} - ${item.title}</option>`
+                    render_tabla += `
+                    <tr title="${item.description}">
+                        <td>${item.index}</td>
+                        <td>${item.sigla}</td>
+                        <td>${item.title}</td>
+                        <td class="text-center">
+                        </td>
+                    </tr>
+                    `
+                }
+            })
+        } else {
+            causas_directas.push({
+                result_col: 0,
+                result_fila: 0,
+                title: '',
+                description: '',
+                sigla: '',
+                index: '',
+            })
+        }
+
+        render_tabla += `
+            <tr class="table-info">
+                <td class="text-center" colspan="4"> CAUSAS INDIRECTAS </td>
+            <tr>
+        `
+        let render_options_causas_indirectas = ''
+        if(causas_indirectas.length != 0){
+            causas_indirectas.forEach(item => {
+                render_options_causas_indirectas += `<option value="${item.index}">${item.index} - ${item.sigla} - ${item.title}</option>`
+                render_tabla += `
+                <tr title="${item.description}">
+                    <td>${item.index}</td>
+                    <td>${item.sigla}</td>
+                    <td>${item.title}</td>
+                    <td class="text-center" title="Seleccione una causa directa para vincular a está causa indirecta">
+                        <select class="form-select" id="select_causas_indirectas_${item.index}">
+                            <option value="0" selected>Seleccione causa directa</option>
+                            ${render_options_causas_directas}
+                        </select>
+                    </td>
+                </tr>
+                `
+            })
+        } else {
+            causas_indirectas.push({
+                result_col: 0,
+                result_fila: 0,
+                title: '',
+                description: '',
+                sigla: '',
+                index: '',
+            })
+        }
+
+        render_tabla += `
+            <tr class="table" style="background-color: rgb(150, 0, 150, 0.2);">
+                <td class="text-center" colspan="4"> CAUSAS DE TERCER ORDEN </td>
+            <tr>
+        `
+        if(causas_tercer_orden.length != 0){
+            causas_tercer_orden.forEach(item => {
+                render_tabla += `
+                <tr title="${item.description}">
+                    <td>${item.index}</td>
+                    <td>${item.sigla}</td>
+                    <td>${item.title}</td>
+                    <td class="text-center">
+                        <select class="form-select" id="select_causas_tercer_orden_${item.index}">
+                            <option value="0" selected>Seleccione causa indirecta</option>
+                            ${render_options_causas_indirectas}
+                        </select>
+                    </td>
+                </tr>
+                `
+            })
+        } else {
+            causas_tercer_orden.push({
+                result_col: 0,
+                result_fila: 0,
+                title: '',
+                description: '',
+                sigla: '',
+                index: '',
+            })
+        }
+
+        render_tabla += `
+            <tr class="table-success">
+                <td class="text-center" colspan="4"> EFECTOS </td>
+            <tr>
+        `
+        if(problemas_zona_salida.length != 0){
+            problemas_zona_salida.forEach(item => {
+                render_tabla += `
+                <tr title="${item.description}">
+                    <td>${item.index}</td>
+                    <td>${item.sigla}</td>
+                    <td>${item.title}</td>
+                    <td class="text-center">
+                    </td>
+                </tr>
+                `
+            })
+        } else {
+            problemas_zona_salida.push({
+                result_col: 0,
+                result_fila: 0,
+                title: '',
+                description: '',
+                sigla: '',
+                index: '',
+            })
+        }
+
+        render_tabla += `
+            <tr class="table-warning">
+                <td class="text-center" colspan="4"> SIN EFECTO </td>
+            <tr>
+        `
+        if(problemas_zona_autonomia.length != 0){
+            problemas_zona_autonomia.forEach(item => {
+                render_tabla += `
+                <tr title="${item.description}">
+                    <td>${item.index}</td>
+                    <td>${item.sigla}</td>
+                    <td>${item.title}</td>
+                    <td class="text-center">
+                    </td>
+                </tr>
+                `
+            })
+        } else {
+            problemas_zona_autonomia.push({
+                result_col: 0,
+                result_fila: 0,
+                title: '',
+                description: '',
+                sigla: '',
+                index: '',
+            })
+        }
+
+
+        console.log('problemas zs')
+        console.log(problemas_zona_salida)
+
+        document.getElementById('filter_problems').innerHTML = render_tabla
+
+        // ------------------ GRAFICA --------------------- ------------------- //
+
+        // Obtener una referencia al elemento canvas del DOM
+        const $grafica = document.querySelector("#grafica");
+        // Las etiquetas son las que van en el eje X. 
+        const etiquetas = problem_data.sigla
+
+        const data = {
+            datasets: [
+                {
+                    label: 'Problema central',
+                    backgroundColor: 'rgb(255, 0, 0, 0.2)',
+                    borderColor: 'rgb(255, 0, 0, 1)',
+                    title: [{label: `${central_problem.index} - ${central_problem.sigla} - ${central_problem.title}`}],
+                    data:  [{
+                            x: central_problem.result_col,
+                            y: central_problem.result_fila,
+                            r: central_problem.result_col,
+                            v: central_problem.index
+                        }],
+                },
+                {
+                    label: 'Causas directas',
+                    backgroundColor: 'rgb(0, 0, 255, 0.2)',
+                    borderColor: 'rgb(0, 0, 255, 1)',
+                    title: causas_directas.
+                    map(label => ({
+                        label: label.index + ' - ' + label.sigla + ' - ' + label.title
+                    })),
+                    data: causas_directas.
+                        map(row => ({
+                            x: row.result_col,
+                            y: row.result_fila,
+                            r: row.result_col,
+                            v: row.index
+                        })),
+                },
+                {
+                    label: 'Causas indirectas',
+                    backgroundColor: 'rgb(0, 100, 200, 0.2)',
+                    borderColor: 'rgb(0, 100, 200, 1)',
+                    title: causas_indirectas.
+                    map(label => ({
+                        label: label.index + ' - ' + label.sigla + ' - ' + label.title
+                    })),
+                    data: causas_indirectas.
+                        map(row => ({
+                            x: row.result_col,
+                            y: row.result_fila,
+                            r: row.result_col,
+                            v: row.index
+                        })),
+                },
+                {
+                    label: 'Causas 3°',
+                    backgroundColor: 'rgb(150, 0, 150, 0.2)',
+                    borderColor: 'rgb(150, 0, 150, 1)',
+                    title: causas_tercer_orden.
+                    map(label => ({
+                        label: label.index + ' - ' + label.sigla + ' - ' + label.title
+                    })),
+                    data: causas_tercer_orden.
+                        map(row => ({
+                            x: row.result_col,
+                            y: row.result_fila,
+                            r: row.result_col,
+                            v: row.index
+                        })),
+                },
+                {
+                    label: 'Sin efecto',
+                    backgroundColor: 'rgb(255, 255, 0, 0.2)',
+                    borderColor: 'rgb(255, 255, 0, 1)',
+                    title: problemas_zona_autonomia.
+                    map(label => ({
+                        label: label.index + ' - ' + label.sigla + ' - ' + label.title
+                    })),
+                    data: problemas_zona_autonomia.
+                        map(row => ({
+                            x: row.result_col,
+                            y: row.result_fila,
+                            r: row.result_col,
+                            v: row.index
+                        })),
+                },
+                {
+                    label: 'Efectos',
+                    backgroundColor: 'rgb(0, 255, 0, 0.2)',
+                    borderColor: 'rgb(0, 255, 0, 1)',
+                    title: problemas_zona_salida.
+                    map(label => ({
+                        label: label.index + ' - ' + label.sigla + ' - ' + label.title
+                    })),
+                    data: problemas_zona_salida.
+                        map(row => ({
+                            x: row.result_col,
+                            y: row.result_fila,
+                            r: row.result_col,
+                            v: row.index
+                        })),
+                },
+                {
+                    label: 'Lim y',
+                    type: 'line',
+                    data: [{x: 0, y: sumatoria, v: ''}, {x: sumatoria*2, y: sumatoria, v: ''}],
+                    fill: false,
+                    borderColor: 'rgb(0, 0, 0)',
+                    tension: 0.1
+                },
+                {
+                    label: 'Lim x',
+                    type: 'line',
+                    data: [{x: sumatoria, y: 0, v: ''}, {x: sumatoria, y: sumatoria*2, v: ''}],
+                    fill: false,
+                    borderColor: 'rgb(0, 0, 0)',
+                    tension: 0.1
+                }
+            ]
+        }
+
+        new Chart($grafica, {
+
+            type: 'bubble',
+            data: data,
+            options: {
+                tooltips: {
+                    callbacks: {
+                        label: function(tooltipItem, data) {
+                            // console.log(data)
+                            var title = data.datasets[tooltipItem.datasetIndex].title[tooltipItem.index].label  
+                            if(title){
+                                return title + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                },
+
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom'
+                    },
+                    yAxes: [{
+                        scaleLabel: {
+                            fontSize: 18,
+                            display: true,
+                            labelString: 'INFLUENCIA'
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            fontSize: 18,
+                            display: true,
+                            labelString: 'DEPENDENCIA'
+                        }
+                    }],
+                },
+                // Core options
+                aspectRatio: 5 / 3,
+                layout: {
+                    padding: 16
+                },
+                elements: {
+                    point: {
+                        radius: function(context) {
+                            var value = context.dataset.data[context.dataIndex];
+                            var size = context.chart.width;
+                            var base = Math.abs(value.v) / 100;
+                            return (size / 24) * base;
+                        }
+                    }
+                },
+            }
+        })
+        
+        // Define a plugin to provide data labels
+        Chart.plugins.register({
+            afterDatasetsDraw: function(chartInstance, easing) {
+                // To only draw at the end of animation, check for easing === 1
+                var ctx = chartInstance.chart.ctx;
+                // console.log(chartInstance.data.datasets)
+                chartInstance.data.datasets.forEach(function (dataset, i) {
+                    var meta = chartInstance.getDatasetMeta(i);
+                    if (!meta.hidden) {
+                        meta.data.forEach(function(element, index) {
+                        // Draw the text in black, with the specified font
+                        ctx.fillStyle = 'rgb(0, 0, 0)';
+                        var fontSize = 16;
+                        var fontStyle = 'normal';
+                        var fontFamily = 'Font Awesome 5 Free';
+                        ctx.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
+                        // Just naively convert to string for now
+                        // <---- ADJUST TO DESIRED TEXT --->
+                        // console.log(dataset)
+                        var dataString = dataset.data[index].v.toString();
+                        // console.log(dataString)
+                        // Make sure alignment settings are correct
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        var padding = 5;
+                        var position = element.tooltipPosition();
+                        ctx.fillText(dataString, position.x, position.y - (fontSize / 2) - padding);
+                        });
+                    }
+                });
+            }
+        });
+    
+    }
+
+// --- # ------- END FILTRO PROBLEMAS ------ # --- // 
+
+    // --- # ----- FUNCTIONMS TO GENERATE TREE PROBLEMS ----- # --- //
+    function errors_generate_tree(errors){
+        let alert = ''
+        console.log('mostrar errores')
+        console.log(errors)
+        errors.forEach(error => {
+            alert += `
+                <div class="alert alert-danger d-flex align-items-center alert-dismissible fade show" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                    <div>
+                        ${error.message}
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+        })
+        document.getElementById('alert_errors_tree').innerHTML += alert
+    }
+
+    function pre_generate_tree_problems(){
+        Swal.fire({
+            title: 'Generar arbol de problemas',
+            text: "Estas seguro, se procedera a generar un nuevo arbol de problemas con los datos de la tabla",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Si, Generar!'
+        }).then(async(result) => {
+            if (result.isConfirmed) {
+                try {
+                    generate_tree_problems()                
+                } catch  {
+                    console.log(error)
+                    Swal.fire(
+                        'Error!',
+                        'No se pudo generar el arbol, recarga la pagina e intenta nuevamente',
+                        'error'
+                    )
+                }
+            } else {
+                Swal.fire(
+                    'Cancelado!',
+                    '',
+                    'error'
+                )
+            }
+        })
+    }
+
+    async function generate_tree_problems(){
+        let errors = []
+        if(causas_indirectas[0].title != ''){
+            await causas_indirectas.forEach(async item => {
+                let dat = document.getElementById(`select_causas_indirectas_${item.index}`).value
+                if(dat == 0){
+                    errors.push({message:`Debe vincular <span class="fw-bold">${item.index}</span> a una causa DIRECTA`})
+                    document.getElementById(`select_causas_indirectas_${item.index}`).classList.add("is-invalid");
+                } else{
+                    document.getElementById(`select_causas_indirectas_${item.index}`).classList.remove("is-invalid");
+                }
+            })
+        }
+        if(causas_tercer_orden[0].title != ''){
+            await causas_tercer_orden.forEach(async item => {
+                let dat = document.getElementById(`select_causas_tercer_orden_${item.index}`).value
+                if(dat == 0){
+                    errors.push({message:`Debe vincular <span class="fw-bold">${item.index}</span> a una causa INDIRECTA`})
+                    document.getElementById(`select_causas_tercer_orden_${item.index}`).classList.add("is-invalid");
+                } else{
+                    document.getElementById(`select_causas_tercer_orden_${item.index}`).classList.remove("is-invalid");
+                }
+            })
+        }
+        console.log(errors)
+        if(errors.length != 0){
+            console.log('hay errores')
+            errors_generate_tree(errors)
+        } else {
+            console.log('NO hay errores')
+            let causas_directas_arr = []
+            if(causas_directas[0].title != ''){
+                causas_directas.forEach(causa => {
+                    
+                    let causas_indirectas_arr = []
+                    if(causas_indirectas[0].title != ''){
+                        causas_indirectas.forEach( indirecta => {
+                            
+                            let causas_tercer_orden_arr = []
+                            if(causas_tercer_orden[0].title != ''){
+                                causas_tercer_orden.forEach( tercer => {
+                                    let dat3 = document.getElementById(`select_causas_tercer_orden_${tercer.index}`).value
+                                    if(indirecta.index == dat3){
+                                        causas_tercer_orden_arr.push(tercer)
+                                    } 
+                                })
+                                indirecta.tercer_orden = causas_tercer_orden_arr
+                            }
+
+                            let dat = document.getElementById(`select_causas_indirectas_${indirecta.index}`).value
+                            if(causa.index == dat){
+                                causas_indirectas_arr.push(indirecta)
+                            }
+                        })
+                    }
+                    let causas_directas_obj = {
+                        title: causa.title,
+                        description: causa.description,
+                        index: causa.index,
+                        sigla: causa.sigla,
+                        result_col: causa.result_col,
+                        result_fila: causa.result_fila,
+                        causas_indirectas: causas_indirectas_arr
+                    }
+                    causas_directas_arr.push(causas_directas_obj)
+                })
+            }
+
+            console.log('efectos')
+            console.log(efectos)
+            let other_efect = []
+      
+            let problem_tree = {
+                central_problem,
+                causas: causas_directas_arr,
+                efectos
+                // efectos: efectos[0].title != '' ? `${efectos}`:`${other_efect}`
+            }
+
+            console.log('problem_tree')
+            console.log(problem_tree)
+
+            try{
+                let url_api = `/tree/register/${vig_tec_id}`
+                axios.post(url_api, {
+                    problem_tree
+                })
+                .then(function(response) {
+                    console.log(response)
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Arbol Generado',
+                        text: 'Arbol de problemas se genero correctamente!',
+                        footer: `<a href="/tree/${vig_tec_id}/${response.data.length_tree}">Ver arbol de problemas</a>`
+                    })
+                })
+                .catch(function (error){
+                    console.log(error.response)
+                })
+            } catch (error){
+                console.log(error)
+            }
+        }
+    }
+
+    let div_width_start_sidebar = 0
+    let div_width_start_contenido = 0
+
+    function show_hide() {
+        console.log('show_hide sidebar')
+        let div_width_sidebar = document.getElementById("sidebar").clientWidth
+        let div_width_contenido = document.getElementById("contenido").clientWidth
+        console.log("div_width_sidebar: ")
+        console.log(div_width_sidebar)
+        console.log('div_width_contenido: ')
+        console.log(div_width_contenido)
+
+        if(div_width_sidebar > 50){
+            console.log('menor a 300')
+            document.getElementById("sidebar").style.display = "none";
+            document.getElementById("contenido").style.width = '94%' 
+        } else {
+            console.log('muestra sidebar')
+            document.getElementById("sidebar").style.display = "";
+            document.getElementById("sidebar").style.width = '20%'
+            document.getElementById("contenido").style.width = '74%'
+        }
+
+        // document.getElementById("contenido").style.width =  div_width_contenido + 'px' 
+        // document.getElementById("abrir").style.display = "inline";
+        // document.getElementById("cerrar").style.display = "none";
+    }
+
+    function downloadCSV(csv, filename) {
+        var csvFile;
+        var downloadLink;
+        // CSV file
+        csvFile = new Blob([csv], {type: "text/csv"});
+        // Download link
+        downloadLink = document.createElement("a");
+        // File name
+        downloadLink.download = filename;
+        // Create a link to the file
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+        // Hide download link
+        downloadLink.style.display = "none";
+        // Add the link to DOM
+        document.body.appendChild(downloadLink);
+        // Click download link
+        downloadLink.click();
+    }
+
+    function exportTableToCSV(filename) {
+        console.log(filename)
+        let export_tabla = ''
+
+        if(filename == "matriz"){
+            export_tabla = "#div_problem"
+        }
+        else if(filename == "promedio_matriz"){
+            export_tabla = "#div_problem_promedio"
+        }
+
+        var csv = [];
+        var tabla = document.querySelector(export_tabla);
+        var rows = tabla.querySelectorAll("table tr");
+        var newCol = ""
+
+        for (var i = 0; i < rows.length; i++) {
+            var row = [], cols = rows[i].querySelectorAll("td, th, input");
+
+            for (var j = 0; j < cols.length; j++) {
+                if(cols[j].innerText == ''){
+                    newCol = cols[j].value
+                } else {
+                    newCol = cols[j].innerText
+                }
+                console.log(newCol)
+
+                if(newCol != undefined){
+                    if(newCol == 'Dependencia'){
+                        newCol = newCol + ','
+                        row.push(newCol);
+                    } else{
+                        row.push(newCol);
+                    }
+                }
+
+                
+            }
+            csv.push(row.join(","));
+        }
+        // Download CSV file
+        downloadCSV(csv.join("\n"), filename);
+    }
+
+    async function print_grafica(){
+        const options = {
+                margin: 1,
+                filename: 'grafica.pdf',
+                image: { 
+                    type: 'jpeg', 
+                    quality: 0.98 
+                },
+                html2canvas: { 
+                    scale: 1 
+                },
+                jsPDF: { 
+                    unit: 'in', 
+                    format: 'b4', 
+                    orientation: 'landscape' 
+                }
+            }
+            let element = document.getElementById('div_grafica')
+
+            let worker = await html2pdf().from(element).set(options).toPdf().output('blob').then((data) => {
+                // console.log(data)
+                let fileURL = URL.createObjectURL(data);
+                window.open(fileURL);
+            })
+    }
+
+    function image_graph(){
+        const imageLink = document.createElement('a')
+        const canvas = document.getElementById('grafica')
+        imageLink.download = 'canvaas.png'
+        imageLink.href = canvas.toDataURL('image/png', 1)
+
+        imageLink.click()
+    }
+
+    // objetivos
+    async function save_obj(){
+        let obj_central = document.getElementById('objetivo_general')
+        let objs_especificos = document.getElementsByName('obj_especifico')
+        let tree_id = document.getElementById('tree_id').value
+        let save = true
+        console.log(obj_central.value)
+
+        let arr_objs_especificos = []
+        objs_especificos.forEach(element => {
+            if(element.value === ''){
+                console.log('element invalid')
+                element.classList.add('is-invalid')
+                save=false;
+            } 
+
+            let obj = {
+                id_problem: element.id,
+                objetivo: element.value
+            }
+            arr_objs_especificos.push(obj)
+        })
+
+        console.log(arr_objs_especificos)
+
+        if(save){
+            console.log('send to back obj')
+            let url = `/tree/objetivos/${vig_tec_id}/${tree_id}`
+            await axios.post(url, {
+                obj_central: obj_central.value,
+                objs_especificos: arr_objs_especificos
+            })
+            .then(function(response) {
+                console.log(response)
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+        } else {
+            alert_danger('Complete los campos')
+        }
+
+    }
+
+    function reload_page(){
+        location.reload();
+    }
+
+    window.onload = function() {
+        get_all_problems();
+    }
+</script>
+
+

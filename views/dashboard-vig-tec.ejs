@@ -1,0 +1,265 @@
+<input id="user_id" type="hidden" value=<%= user._id %>>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+    </symbol>
+    <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+    </symbol>
+    <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </symbol>
+</svg>
+
+<!-- BREADCRUMB -->
+<div class="float-end mt-2 me-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Inicio</li>
+        </ol>
+    </nav>
+</div>
+
+<!-- END BREADCRUMB -->
+
+<!-- Modal Add Vigilancia tec -->
+<div class="modal fade" id="modal_ficha_vig_tec" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Crear nuevo estudio de vigilancia tecnológica</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="form_post_ficha"> <!-- Form create ficha vig_tec-->
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="title_ficha" name="title_ficha" placeholder="Titulo" required>
+                            <label for="title_ficha">Titulo</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="area_tema" name="area_tema" placeholder="Tema-Área" required>
+                            <label for="area_tema">Tema-Área</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="sector" name="sector">
+                                <option selected value="Salud">Salud</option>
+                                <option value="Agropecuario">Agropecuario</option>
+                                <option value="Agroforestas">Agroforestas</option>
+                                <option value="Ingeniería">Ingeniería</option>
+                                <option value="No aplica">No aplica</option>
+                            </select>
+                            <label for="sector">Sector</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="poblacion" name="poblacion">
+                                <option selected value="Urbana">Urbana</option>
+                                <option value="Rural">Rural</option>
+                                <option value="Urbana y Rural">Urbana y Rural</option>
+                                <option value="Desplazados">Desplazados</option>
+                                <option value="Victimas del conflicto">Victimas del conflicto</option>
+                                <option value="Vulnerable">Vulnerable</option>
+                                <option value="No aplica">No aplica</option>
+                            </select>
+                            <label for="poblacion">Población</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Keywords - palabras clave" id="keywords" name="keywords" style="height: 100px" required></textarea>
+                            <label for="keywords">Keywords (favor separ por comas)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                <button class="btn btn-primary" type="button" id="btn_post_ficha" onclick="post_ficha()">Crear ficha</button>
+            </div>
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<!-- # ---- Modal End ---- # -->
+
+<!-- Fichas Vigilancia Tecnologica Start -->
+<div class="container-xxl py-5" style="min-height: 500px;">
+    <div id="alerts"></div>
+    <div class="container">
+        <div class="row g-4" id="fichas_vig_tec">
+            
+        </div>
+    </div>
+</div>
+    
+<button type="button" class="btn-flotante btn-warning btn-lg-square rounded-circle" data-bs-toggle="modal" data-bs-target="#modal_ficha_vig_tec"
+    title="Agregar vigilancia tecnologica"><i class="fas fa-plus"></i>
+</button>
+<!-- # --- Fichas Vigilancia Tecnologica End --- # -->
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+
+    let user_id = document.getElementById('user_id').value
+
+    let alert_succes = `
+        <div class="alert alert-success d-flex align-items-center alert-dismissible fade show" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+            <div>
+                Ficha de vigilancia tecnológica creada con exito!
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+
+    async function getRequestApiAllUserPerfil() {
+        let render_vig_tec = ''
+        let url = '/vigTec/getVigTecByUser'
+        axios.get(url)
+            .then(function(response) {
+                let jsonData = response.data
+                console.log(jsonData)
+                jsonData.forEach(vig => {
+                    let state = false
+                    if(user_id == vig.creator){
+                        state = true
+                    } else {
+                        let colab = vig.colabs.find(colab => colab.user_id == user_id)
+                        if(colab.permissions.state == 'Active'){
+                            state = true
+                        }
+                    }
+                    let keywords = ''
+                    if(vig.keywords.length != 0){
+                        vig.keywords.forEach(key => {
+                            keywords += key + ', '
+                        })
+                    }
+                    render_vig_tec += `
+                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                            <div class="service-item position-relative h-100">
+                                <div class="service-text rounded p-5">
+                                    <div class="btn-square bg-light rounded-circle mx-auto mb-4"
+                                        style="width: 64px; height: 64px;">
+                                        <img class="img-fluid" src="img/icon/icon-10.png" alt="Icon">
+                                    </div>
+                                    <h5 class="lh-2 lim-text mb-3" style="height: 48px;" title="${vig.title_ficha}">${vig.title_ficha}</h5>
+                                        <p class="mb-0">${keywords}</p>
+                                        <p class="mb-0 text-muted" style="font-size: 12px">
+                                            <span class="fst-italic">Sector:&nbsp;</span> ${vig.sector}, 
+                                            <span class="fst-italic">Población:&nbsp;</span> ${vig.poblacion}
+                                        </p>
+                                </div>
+                                <div class="service-btn rounded-0 rounded-bottom">
+                                    ${state? `
+                                    <a class="text-primary fw-medium" href="/vigTec/${vig._id}">
+                                        Ver <i class="bi bi-chevron-double-right ms-2"></i>
+                                    </a>
+                                    `:`
+                                    <a class="text-warning fw-medium">
+                                        Bloquedo <i class="bi bi-chevron-double-right ms-2"></i>
+                                    </a>
+                                    `}
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    `
+                });
+                document.getElementById('fichas_vig_tec').innerHTML = render_vig_tec;
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+    }
+    
+    async function post_ficha() {
+    
+        let title_ficha = document.getElementById('title_ficha').value
+        let area_tema = document.getElementById('area_tema').value
+        let sector = document.getElementById('sector').value
+        let poblacion = document.getElementById('poblacion').value
+        let keywords = document.getElementById('keywords').value
+
+        let btn = document.getElementById('btn_post_ficha')
+        btn.disabled = true;
+        btn.innerHTML = `
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        `
+        
+        const form = document.getElementById('form_post_ficha')
+        Array.from(form.elements).forEach(element => {
+            if (!element.value) {
+                element.classList.add("is-invalid");
+                element.classList.remove("is-valid");
+                valueGuardar = false
+            } else {
+                element.classList.remove("is-invalid");
+                element.classList.add("is-valid");
+                valueGuardar = true
+
+            }
+        });
+
+        if(title_ficha !='' && area_tema != '' && keywords != ''){
+            console.log('send')
+            console.log(area_tema)
+            console.log('send')
+            axios.post('/vigTec/register', {
+                title_ficha,
+                area_tema,
+                sector,
+                poblacion,
+                keywords
+            })
+            .then(function(response) {
+                console.log(response)
+                if(response.status == 200){
+                    
+                    btn.disabled = false;
+                    btn.innerHTML = `Crear ficha`
+
+                    Array.from(form.elements).forEach(element => {
+                        element.classList.remove("is-valid");
+                        element.value = ''
+                    });
+                    
+                    $("#modal_ficha_vig_tec").modal("hide")
+                    document.getElementById('alerts').innerHTML += alert_succes
+                    getRequestApiAllUserPerfil()
+                } else {
+                    btn.disabled = false;
+                    btn.innerHTML = `Crear ficha`
+                }
+                
+            })
+            .catch(function(error){
+                console.log(error)
+            })
+        } else {
+            console.log('NO PASA')
+            btn.disabled = false;
+            btn.innerHTML = `Crear ficha`
+        }
+        
+    }
+
+    window.onload = function() {
+        getRequestApiAllUserPerfil();
+	}
+</script>
