@@ -1,24 +1,25 @@
 
 <style>
   a.navar,  a.navar:visited {
-    color: white !important;
+    color: #0A2351 !important;
   }
-
   a.navar:hover, a.navar:active {
-      color: rgb(196, 192, 192) !important;
+      color: #0D5EC1 !important;
   }
-
   a.navar.active {
-      color: rgb(255, 241, 44) !important;
+      color: #0D5EC1 !important;
+      font-weight: 700;
   }
+  .navbar-toggler { border-color: #0A2351; }
+  .navbar-toggler-icon { filter: invert(15%) sepia(80%) saturate(1500%) hue-rotate(210deg); }
 </style>
     <!-- Navbar Start -->
-    <div class="container-fluid sticky-top" style="background-color: #0A2351;">
+    <div class="container-fluid sticky-top bg-white shadow-sm" style="background-color: #FFFFFF !important; border-bottom: 3px solid #0A2351;">
         <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-dark p-lg-0" style="background-color: #0A2351;">
+            <nav class="navbar navbar-expand-lg navbar-light p-lg-0" style="background-color: #FFFFFF !important;">
             
-                <a class="navbar-brand" href="/dashboard-vig-tec" style="margin-left: 0px; margin-right: 100px;">
-                    <img src="/img/gesproject.png" alt="Gesproject" height="55" class="d-inline-block align-text-top" onerror="this.src='/img/icon/cidtca.png'">
+                <a class="navbar-brand" href="/dashboard-vig-tec" style="margin-left: 0px; margin-right: 60px;">
+                    <img src="/img/gesproject.png" alt="Gesproject" height="50" class="d-inline-block align-text-top">
                   </a>
                 <button type="button" class="navbar-toggler me-0" data-bs-toggle="collapse"
                     data-bs-target="#navbarCollapse">
@@ -43,7 +44,7 @@
                     </div>
 
                     <div class="nav-item dropdown ms-auto">
-                        <a href="#" class="nav-link dropdown-toggle text-white" data-bs-toggle="dropdown"><i class="fas fa-user-circle fa-lg"></i> <%= user.username %></a>
+                        <a href="#" class="nav-link dropdown-toggle" style="color: #0A2351;" data-bs-toggle="dropdown"><i class="fas fa-user-circle fa-lg"></i> <%= user.username %></a>
                         <div class="dropdown-menu bg-light rounded-0 rounded-bottom m-0">
                             <a href="/profile" class="dropdown-item">Perfil</a>
                             <hr>
